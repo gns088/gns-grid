@@ -1,1 +1,50 @@
-<p>ngx-gns-grid works!</p>
+<table class="table"
+       [class.table-sm]="ngxGnsGridService.tableSmall"
+       [class.table-bordered]="ngxGnsGridService.tableBordered"
+       [class.table-striped]="ngxGnsGridService.stripedRows"
+       [class.table-hover]="ngxGnsGridService.hoverRows"
+       [class.table-dark]="ngxGnsGridService.tableDark">
+  <thead>
+  <tr
+    class="{{ngxGnsGridService.gridConfig.gridHeaderRowClass}} {{ngxGnsGridService.gridConfig.gridHeaderRowClassFn && ngxGnsGridService.gridConfig.gridHeaderRowClassFn()}}"
+    [ngClass]="ngxGnsGridService.gridConfig.gridHeaderRowNgClass"
+    [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() ? ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() : ngxGnsGridService.gridConfig.gridHeaderRowNgStyle ? ngxGnsGridService.gridConfig.gridHeaderRowNgStyle : {}">
+    <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
+        class="{{ngxGnsGridService.gridConfig.gridHeaderCellClass}} {{ngxGnsGridService.gridConfig.gridHeaderCellClassFn && ngxGnsGridService.gridConfig.gridHeaderCellClassFn(column, columnIndex)}}"
+        [ngClass]="ngxGnsGridService.gridConfig.gridHeaderCellNgClass"
+        [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) ? ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.gridHeaderCellNgStyle ? ngxGnsGridService.gridConfig.gridHeaderCellNgStyle : {}"
+        [style.width.px]="column.width"
+        [style.min-width.px]="column.minWidth">
+      <label class="mat-header-column-title sort-by"
+             *ngIf="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
+             grid-sort-header>
+        {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
+      </label>
+      <label class="mat-header-column-title"
+             *ngIf="!ngxGnsGridService.sortable || (ngxGnsGridService.sortable && column.sortable === false)">
+        {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
+      </label>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
+      class="{{ngxGnsGridService.gridConfig.gridRowClass}} {{ngxGnsGridService.gridConfig.gridRowClassFn && ngxGnsGridService.gridConfig.gridRowClassFn(rowItem, rowItemIndex)}}"
+      [ngClass]="ngxGnsGridService.gridConfig.gridRowNgClass"
+      [ngStyle]="ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, rowItemIndex) ? ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, index) : ngxGnsGridService.gridConfig.gridRowNgStyle ? ngxGnsGridService.gridConfig.gridRowNgStyle : {}">
+    <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
+      <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
+          [ngClass]="column.ngClass"
+          [ngStyle]="column.styleFn && column.styleFn(rowItem,rowItemIndex) ? column.styleFn && column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
+        <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
+             [ngClass]="column.cellNgClass"
+             [ngStyle]="column.cellStyleFn && column.cellStyleFn(rowItem,rowItemIndex) ? column.cellStyleFn && column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
+          <label class="grid-column-cell-text">
+            {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
+          </label>
+        </div>
+      </td>
+    </ng-container>
+  </tr>
+  </tbody>
+</table>
