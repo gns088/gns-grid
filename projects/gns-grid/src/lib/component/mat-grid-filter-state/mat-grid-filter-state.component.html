@@ -1,0 +1,30 @@
+<ng-container *ngIf="column.filterDetails" [ngSwitch]="column.filterDetails.type">
+  <ng-container *ngSwitchCase="'text'">
+    <ngx-mat-grid-string-filter [id]="column.id" [filterDetails]="column.filterDetails"
+                                [filter]="state.filter"></ngx-mat-grid-string-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'number'">
+    <ngx-mat-grid-number-filter [id]="column.id" [filterDetails]="column.filterDetails"
+                                [filter]="state.filter"></ngx-mat-grid-number-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'date'">
+    <ngx-mat-grid-date-filter type="date" [id]="column.id" [filterDetails]="column.filterDetails"
+                              [filter]="state.filter"></ngx-mat-grid-date-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'dateTime'">
+    <ngx-mat-grid-date-filter type="dateTime" [id]="column.id" [filterDetails]="column.filterDetails"
+                              [filter]="state.filter"></ngx-mat-grid-date-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'time'">
+    <ngx-mat-grid-date-filter type="time" [id]="column.id" [filterDetails]="column.filterDetails"
+                              [filter]="state.filter"></ngx-mat-grid-date-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'singleSelect'">
+    <ngx-mat-grid-list-filter type="singleSelect" [id]="column.id" [filterDetails]="column.filterDetails"
+                              [filter]="state.filter"></ngx-mat-grid-list-filter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'multiSelect'">
+    <ngx-mat-grid-list-filter type="multiSelect" [id]="column.id" [filterDetails]="column.filterDetails"
+                              [filter]="state.filter"></ngx-mat-grid-list-filter>
+  </ng-container>
+</ng-container>

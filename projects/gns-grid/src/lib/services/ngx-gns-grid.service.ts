@@ -27,10 +27,12 @@ export class NgxGnsGridService {
   private _tableBordered: boolean = false;
   private _tableSmall: boolean = true;
   private _tableDark: boolean = false;
+  private _stickyHeader: boolean = false;
   private _selectable: boolean = false;
   private _selectableConfig: RowSelectionConfig = new RowSelectionConfig();
   private _selectedKeys: any[] = [];
   private _selection = new SelectionModel<any>();
+  private _tableHeight: string;
 
   get stateObservable$(): ReplaySubject<GridState> {
     return this._stateObservable$;
@@ -110,7 +112,6 @@ export class NgxGnsGridService {
 
   set columnDef(value: GridColumnDef[]) {
     this._columnDef = coerceArray(value);
-    console.log(this.columnDef);
   }
 
   get pageable(): boolean {
@@ -271,5 +272,21 @@ export class NgxGnsGridService {
 
   set tableDark(value: boolean) {
     this._tableDark = coerceBooleanProperty(value);
+  }
+
+  get stickyHeader(): boolean {
+    return this._stickyHeader;
+  }
+
+  set stickyHeader(value: boolean) {
+    this._stickyHeader = coerceBooleanProperty(value);
+  }
+
+  get tableHeight(): string {
+    return this._tableHeight;
+  }
+
+  set tableHeight(value: string) {
+    this._tableHeight = value;
   }
 }

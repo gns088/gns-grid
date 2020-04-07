@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, TrackByFunction, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TrackByFunction, ViewEncapsulation } from '@angular/core';
 import { NgxGnsGridService } from '../services/ngx-gns-grid.service';
 import { NgxGnsGridStateService } from '../services/ngx-gns-grid-state.service';
-import { GridColumnDef, GridConfig, GridState, RowSelectionConfig, SelectionModel } from '../types';
+import { GridColumnDef, GridConfig, GridPagination, GridSort, GridState, RowSelectionConfig, SelectionModel } from '../types';
 import { GridPaginationConfig } from '../types/grid-pagination-config';
+import { Subscription } from 'rxjs';
+import { GridUtils } from '../utils';
 
 @Component({
   selector: 'ngx-gns-grid',
@@ -11,7 +13,7 @@ import { GridPaginationConfig } from '../types/grid-pagination-config';
   encapsulation: ViewEncapsulation.None,
   providers: [NgxGnsGridService, NgxGnsGridStateService]
 })
-export class NgxGnsGridComponent implements OnInit {
+export class NgxGnsGridComponent implements OnInit, OnDestroy {
   /**
    * store state for active grid, store all information about sorting, filtering and pagination
    * */
@@ -174,11 +176,166 @@ export class NgxGnsGridComponent implements OnInit {
     this.ngxGnsGridService.tableDark = value;
   }
 
-  constructor(public ngxGnsGridService: NgxGnsGridService,
-              public ngxGnsGridStateService: NgxGnsGridStateService) {
+  @Input('stickyHeader')
+  set stickyHeader(value: boolean) {
+    this.ngxGnsGridService.stickyHeader = value;
+  }
+
+  @Input('tableHeight')
+  set tableHeight(value: string) {
+    this.ngxGnsGridService.tableHeight = value;
+  }
+
+
+  private stateSubscription: Subscription;
+  private filterSubscription: Subscription;
+  private sortSubscription: Subscription;
+  private paginationSubscription: Subscription;
+
+  @Output('stateChange') stateChange: EventEmitter<GridState> = new EventEmitter<GridState>();
+  @Output('filterChange') filterChange: EventEmitter<Map<string, any>> = new EventEmitter<Map<string, any>>();
+  @Output('sortChange') sortChange: EventEmitter<Map<string, string>> = new EventEmitter<Map<string, string>>();
+  @Output('pageChange') pageChange: EventEmitter<GridPagination> = new EventEmitter<GridPagination>();
+  @Output('selectionChange') selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+
+  constructor(private ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
   }
 
   ngOnInit() {
+    this.stateSubscription = this.ngxGnsGridService.stateObservable$.subscribe((value => {
+      this.ngxGnsGridStateService.filter = value.filter;
+      this.state.filter = value.filter;
+      this.ngxGnsGridStateService.sort = value.sort;
+      this.state.sort = value.sort;
+      const pagination: GridPagination = new GridPagination();
+      pagination.pageIndex = value.pageIndex;
+      pagination.pageSize = value.pageSize;
+      pagination.total = value.total;
+      this.state.pageIndex = value.pageIndex;
+      this.state.pageSize = value.pageSize;
+      this.state.total = value.total;
+      this.ngxGnsGridStateService.pagination = pagination;
+      this.preserveSelection();
+      if (this.ngxGnsGridService.isClientSide) {
+        this.processData();
+      }
+    }));
+
+    this.filterSubscription = this.ngxGnsGridService.filterObservable$.subscribe((value => {
+      this.state.pageIndex = 1;
+      this.state.filter = value;
+      this.filterChange.emit(value);
+      this.ngxGnsGridService.stateObservable$.next(this.state);
+      this.stateChange.emit(this.state);
+    }));
+
+    this.sortSubscription = this.ngxGnsGridService.sortObservable$.subscribe((value => {
+      this.state.pageIndex = 1;
+      this.state.sort = value;
+      this.sortChange.emit(value);
+      this.ngxGnsGridService.stateObservable$.next(this.state);
+      this.stateChange.emit(this.state);
+    }));
+
+    this.paginationSubscription = this.ngxGnsGridService.paginationObservable$.subscribe((value => {
+      this.selection = new SelectionModel<Element>(this.ngxGnsGridService.selectableConfig.multiple, []);
+      this.state.pageIndex = value.pageIndex;
+      this.state.pageSize = value.pageSize;
+      this.state.total = value.total;
+      this.pageChange.emit(value);
+      this.ngxGnsGridService.stateObservable$.next(this.state);
+      this.stateChange.emit(this.state);
+    }));
+
+    this.preserveSelection();
   }
+
+  ngOnDestroy(): void {
+    if (this.stateSubscription) {
+      this.stateSubscription.unsubscribe();
+    }
+    if (this.filterSubscription) {
+      this.filterSubscription.unsubscribe();
+    }
+    if (this.sortSubscription) {
+      this.sortSubscription.unsubscribe();
+    }
+    if (this.paginationSubscription) {
+      this.paginationSubscription.unsubscribe();
+    }
+  }
+
+  private processData() {
+    const result = GridUtils.process([...this.ngxGnsGridService.dataSource], this.state, this.ngxGnsGridService.columnDef);
+    this.ngxGnsGridService.localDataSource = result.data;
+    this.state.total = result.state.total;
+  }
+
+  onSortChange(event: GridSort) {
+    this.state.sort = new Map<string, string>();
+    if (event.direction) {
+      this.state.sort[event.field] = event.direction;
+    }
+    this.ngxGnsGridService.sortObservable$.next(this.state.sort);
+  }
+
+  stopEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onPageChange(event: number) {
+    const pagination = new GridPagination();
+    pagination.pageIndex = event;
+    pagination.pageSize = this.state.pageSize;
+    pagination.total = this.state.total;
+    this.ngxGnsGridService.paginationObservable$.next(pagination);
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.ngxGnsGridService.selection.selected.length;
+    const numRows = this.ngxGnsGridService.localDataSource.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.ngxGnsGridService.selection.clear() :
+      this.ngxGnsGridService.localDataSource.forEach(row => {
+        this.ngxGnsGridService.selection.select(row);
+      });
+    this.onSelectionChange();
+  }
+
+  onSelectionChange() {
+    setTimeout(() => {
+      if (this.ngxGnsGridService.selectableConfig.columnId) {
+        this.ngxGnsGridService.selectedKeys = this.ngxGnsGridService.selection.selected.map(o => o[this.ngxGnsGridService.selectableConfig.columnId]);
+      } else {
+        this.ngxGnsGridService.selectedKeys = this.ngxGnsGridService.selection.selected;
+      }
+      this.selectionChange.emit(this.ngxGnsGridService.selection.selected);
+      this.selectedKeysChange.emit(this.ngxGnsGridService.selectedKeys);
+    });
+  }
+
+  private preserveSelection = () => {
+    if (this.ngxGnsGridService.selectableConfig.columnId) {
+      this.ngxGnsGridService.localDataSource.forEach((object) => {
+        if (this.ngxGnsGridService.selectedKeys.indexOf(object[this.ngxGnsGridService.selectableConfig.columnId]) > -1) {
+          this.ngxGnsGridService.selection.select(object);
+        }
+      });
+    } else {
+      this.ngxGnsGridService.selectedKeys.forEach((object) => {
+        const findObject = this.ngxGnsGridService.localDataSource.find(o => JSON.stringify(o) === JSON.stringify(object));
+        if (findObject && !this.ngxGnsGridService.selection.isSelected(findObject)) {
+          this.ngxGnsGridService.selection.select(findObject);
+        }
+      });
+    }
+  };
 
 }

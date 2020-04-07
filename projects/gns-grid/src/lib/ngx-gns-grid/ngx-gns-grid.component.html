@@ -1,50 +1,113 @@
-<table class="table"
-       [class.table-sm]="ngxGnsGridService.tableSmall"
-       [class.table-bordered]="ngxGnsGridService.tableBordered"
-       [class.table-striped]="ngxGnsGridService.stripedRows"
-       [class.table-hover]="ngxGnsGridService.hoverRows"
-       [class.table-dark]="ngxGnsGridService.tableDark">
-  <thead>
-  <tr
-    class="{{ngxGnsGridService.gridConfig.gridHeaderRowClass}} {{ngxGnsGridService.gridConfig.gridHeaderRowClassFn && ngxGnsGridService.gridConfig.gridHeaderRowClassFn()}}"
-    [ngClass]="ngxGnsGridService.gridConfig.gridHeaderRowNgClass"
-    [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() ? ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() : ngxGnsGridService.gridConfig.gridHeaderRowNgStyle ? ngxGnsGridService.gridConfig.gridHeaderRowNgStyle : {}">
-    <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
-        class="{{ngxGnsGridService.gridConfig.gridHeaderCellClass}} {{ngxGnsGridService.gridConfig.gridHeaderCellClassFn && ngxGnsGridService.gridConfig.gridHeaderCellClassFn(column, columnIndex)}}"
-        [ngClass]="ngxGnsGridService.gridConfig.gridHeaderCellNgClass"
-        [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) ? ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.gridHeaderCellNgStyle ? ngxGnsGridService.gridConfig.gridHeaderCellNgStyle : {}"
-        [style.width.px]="column.width"
-        [style.min-width.px]="column.minWidth">
-      <label class="mat-header-column-title sort-by"
-             *ngIf="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
-             grid-sort-header>
-        {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
-      </label>
-      <label class="mat-header-column-title"
-             *ngIf="!ngxGnsGridService.sortable || (ngxGnsGridService.sortable && column.sortable === false)">
-        {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
-      </label>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
-      class="{{ngxGnsGridService.gridConfig.gridRowClass}} {{ngxGnsGridService.gridConfig.gridRowClassFn && ngxGnsGridService.gridConfig.gridRowClassFn(rowItem, rowItemIndex)}}"
-      [ngClass]="ngxGnsGridService.gridConfig.gridRowNgClass"
-      [ngStyle]="ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, rowItemIndex) ? ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, index) : ngxGnsGridService.gridConfig.gridRowNgStyle ? ngxGnsGridService.gridConfig.gridRowNgStyle : {}">
-    <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
-      <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
-          [ngClass]="column.ngClass"
-          [ngStyle]="column.styleFn && column.styleFn(rowItem,rowItemIndex) ? column.styleFn && column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
-        <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
-             [ngClass]="column.cellNgClass"
-             [ngStyle]="column.cellStyleFn && column.cellStyleFn(rowItem,rowItemIndex) ? column.cellStyleFn && column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
-          <label class="grid-column-cell-text">
-            {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
-          </label>
+<div
+  [class.shadow]="ngxGnsGridService.tableShadow">
+  <ng-container *ngIf="ngxGnsGridService.pageable && ngxGnsGridService.paginationConfig.position === 'top'">
+    <ng-container *ngTemplateOutlet="paginatorTemplateRef"></ng-container>
+  </ng-container>
+  <table class="table"
+         [class.table-sm]="ngxGnsGridService.tableSmall"
+         [class.table-bordered]="ngxGnsGridService.tableBordered"
+         [class.table-striped]="ngxGnsGridService.stripedRows"
+         [class.table-hover]="ngxGnsGridService.hoverRows"
+         [class.table-dark]="ngxGnsGridService.tableDark"
+         [class.table-fixed]="ngxGnsGridService.stickyHeader">
+    <thead>
+    <tr
+      class="{{ngxGnsGridService.gridConfig.gridHeaderRowClass}} {{ngxGnsGridService.gridConfig.gridHeaderRowClassFn && ngxGnsGridService.gridConfig.gridHeaderRowClassFn()}}"
+      [ngClass]="ngxGnsGridService.gridConfig.gridHeaderRowNgClass"
+      [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() ? ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() : ngxGnsGridService.gridConfig.gridHeaderRowNgStyle ? ngxGnsGridService.gridConfig.gridHeaderRowNgStyle : {}">
+      <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
+          class="{{ngxGnsGridService.gridConfig.gridHeaderCellClass}} {{ngxGnsGridService.gridConfig.gridHeaderCellClassFn && ngxGnsGridService.gridConfig.gridHeaderCellClassFn(column, columnIndex)}}"
+          [ngClass]="ngxGnsGridService.gridConfig.gridHeaderCellNgClass"
+          [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) ? ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.gridHeaderCellNgStyle ? ngxGnsGridService.gridConfig.gridHeaderCellNgStyle : {}"
+          [style.width.px]="column.width"
+          [style.min-width.px]="column.minWidth">
+        <div class="d-flex flex-column">
+          <div class="table-filter"
+               [class.no-filter-col]="!ngxGnsGridService.filterable || (ngxGnsGridService.filterable && column.filterable === false)">
+            <label class="mat-header-column-title"
+                   sortable
+                   [state]="state"
+                   [sortable]="column.id"
+                   [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
+                   (sort)="onSortChange($event)">
+              {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
+            </label>
+            <ngx-mat-grid-filter-state [column]="column" [state]="state"
+                                       *ngIf="(ngxGnsGridService.filterable && column.filterable === undefined) || (ngxGnsGridService.filterable && column.filterable)">
+            </ngx-mat-grid-filter-state>
+          </div>
         </div>
-      </td>
-    </ng-container>
-  </tr>
-  </tbody>
-</table>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
+        class="{{ngxGnsGridService.gridConfig.gridRowClass}} {{ngxGnsGridService.gridConfig.gridRowClassFn && ngxGnsGridService.gridConfig.gridRowClassFn(rowItem, rowItemIndex)}}"
+        [ngClass]="ngxGnsGridService.gridConfig.gridRowNgClass"
+        [ngStyle]="ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, rowItemIndex) ? ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, index) : ngxGnsGridService.gridConfig.gridRowNgStyle ? ngxGnsGridService.gridConfig.gridRowNgStyle : {}">
+      <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
+        <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
+            [ngClass]="column.ngClass"
+            [ngStyle]="column.styleFn && column.styleFn(rowItem,rowItemIndex) ? column.styleFn && column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
+          <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
+               [ngClass]="column.cellNgClass"
+               [ngStyle]="column.cellStyleFn && column.cellStyleFn(rowItem,rowItemIndex) ? column.cellStyleFn && column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
+            <label class="grid-column-cell-text">
+              {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
+            </label>
+          </div>
+        </td>
+      </ng-container>
+    </tr>
+    </tbody>
+  </table>
+  <ng-container *ngIf="ngxGnsGridService.pageable && ngxGnsGridService.paginationConfig.position === 'bottom'">
+    <ng-container *ngTemplateOutlet="paginatorTemplateRef"></ng-container>
+  </ng-container>
+</div>
+<ng-template #paginatorTemplateRef>
+  <div class="d-flex" [ngClass]="{
+  'ml-4': ngxGnsGridService.paginationConfig.align === 'start',
+  'justify-content-start': ngxGnsGridService.paginationConfig.align === 'start',
+  'justify-content-center': ngxGnsGridService.paginationConfig.align === 'center',
+  'mr-4': ngxGnsGridService.paginationConfig.align === 'end',
+  'justify-content-end': ngxGnsGridService.paginationConfig.align === 'end'
+  }">
+    <select class="custom-select mr-2"
+            [class.pagination-option-lg]="ngxGnsGridService.paginationConfig.size === 'lg'"
+            [class.pagination-option-sm]="ngxGnsGridService.paginationConfig.size === 'sm'"
+            style="width: auto"
+            [(ngModel)]="state.pageSize"
+            (ngModelChange)="onPageChange(1)">
+      <option *ngFor="let item of ngxGnsGridService.paginationConfig.pageSizeOptions" [ngValue]="item">
+        {{item}}
+      </option>
+    </select>
+    <ngb-pagination [size]="ngxGnsGridService.paginationConfig.size"
+                    [disabled]="ngxGnsGridService.paginationConfig.disabled"
+                    [collectionSize]="state.total"
+                    [(page)]="state.pageIndex"
+                    (pageChange)="onPageChange($event)"
+                    [pageSize]="state.pageSize"
+                    [maxSize]="ngxGnsGridService.paginationConfig.maxSize"
+                    [boundaryLinks]="true"
+                    [rotate]="true">
+      <ng-template ngbPaginationFirst *ngIf="ngxGnsGridService.paginationConfig.firstLabel">
+        {{ngxGnsGridService.paginationConfig.firstLabel}}
+      </ng-template>
+      <ng-template ngbPaginationLast *ngIf="ngxGnsGridService.paginationConfig.lastLabel">
+        {{ngxGnsGridService.paginationConfig.lastLabel}}
+      </ng-template>
+      <ng-template ngbPaginationPrevious *ngIf="ngxGnsGridService.paginationConfig.prevLabel">
+        {{ngxGnsGridService.paginationConfig.prevLabel}}
+      </ng-template>
+      <ng-template ngbPaginationNext *ngIf="ngxGnsGridService.paginationConfig.nextLabel">
+        {{ngxGnsGridService.paginationConfig.nextLabel}}
+      </ng-template>
+      <ng-template ngbPaginationEllipsis *ngIf="ngxGnsGridService.paginationConfig.nextLabel">
+        {{ngxGnsGridService.paginationConfig.nextLabel}}
+      </ng-template>
+    </ngb-pagination>
+  </div>
+</ng-template>
+

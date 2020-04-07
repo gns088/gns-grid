@@ -1,0 +1,12 @@
+:host::ng-deep {
+
+  .ng-select {
+    width: 90%;
+
+    .ng-select-container {
+      border-radius: 0;
+      min-height: 30px;
+      height: 30px;
+    }
+  }
+}

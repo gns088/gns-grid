@@ -12,11 +12,24 @@ export class AppComponent {
     {
       id: 'id',
       headerTitle: '#',
-      width: 100
+      width: 300,
+      filterDetails: {
+        icon: true,
+        append: 'fa fa-user-circle',
+        type: 'singleSelect',
+        placeholder: 'Search',
+        listValue: [1, 2, 3, 4, 5, 6, 7, 8, 10]
+      }
     },
     {
       id: 'first',
-      headerTitle: 'First'
+      headerTitle: 'First',
+      filterDetails: {
+        icon: true,
+        append: 'fa fa-user-circle',
+        type: 'date',
+        placeholder: 'Search'
+      }
     },
     {
       id: 'last',
@@ -27,30 +40,18 @@ export class AppComponent {
       headerTitle: 'Handle'
     }
   ];
-  dataSource: any[] = [
-    {
-      id: '1',
-      first: 'Mark',
-      last: 'Otto',
-      handle: 'mdo',
-    },
-    {
-      id: '2',
-      first: 'Mark',
-      last: 'Otto',
-      handle: 'mdo',
-    },
-    {
-      id: '3',
-      first: 'Mark',
-      last: 'Otto',
-      handle: 'mdo',
-    },
-    {
-      id: '4',
-      first: 'Mark',
-      last: 'Otto',
-      handle: 'mdo',
+  dataSource: any[] = [];
+
+  constructor() {
+    const length = 20;
+    for (let i = 1; i <= length; i++) {
+      this.dataSource.push({
+        id: i,
+        first: 'Mark' + i,
+        last: 'Otto',
+        handle: 'mdo',
+      });
     }
-  ];
+    this.dataSource = [...this.dataSource];
+  }
 }

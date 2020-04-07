@@ -58,7 +58,7 @@ export class GridUtils {
   public static process(data: any[], state: GridState, columnDef: GridColumnDef[]): MatGridProcessResult {
     data = this.filterData(data, state.filter, columnDef);
     data = this.sortData(data, state.sort);
-    const pager = this.getPager(data.length, state.pageIndex + 1, state.pageSize);
+    const pager = this.getPager(data.length, state.pageIndex, state.pageSize);
     data = this.pagingData(data, pager);
     state.total = pager.total;
     return {

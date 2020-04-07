@@ -1,4 +1,6 @@
-export type GridColumnFilterType = 'text' | 'number' | 'date' | 'dateTime' | 'time' | 'singleSelect' | 'multiSelect';
+export type GridColumnFilterType = 'text' | 'number' | 'date' | 'singleSelect' | 'multiSelect';
+
+// | 'dateTime' | 'time'
 
 export class GridColumnFilterDef {
   type: GridColumnFilterType;

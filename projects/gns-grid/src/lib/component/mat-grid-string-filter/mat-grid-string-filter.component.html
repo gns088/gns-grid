@@ -1,0 +1,22 @@
+<div class="input-group" *ngIf="filterDetails">
+  <div class="input-group-prepend" *ngIf="filterDetails.prepend">
+    <span class="input-group-text" *ngIf="!filterDetails.icon">
+      {{filterDetails.prepend}}
+    </span>
+    <span class="input-group-text" *ngIf="filterDetails.icon">
+      <i *ngIf="filterDetails.prepend"
+         class="{{filterDetails.prepend}}" aria-hidden="true"></i>
+    </span>
+  </div>
+  <input type="text" [name]="'string-'+id+'-filter'" [(ngModel)]="filter[id]" (change)="onChange()"
+         [placeholder]="filterDetails.placeholder? filterDetails.placeholder : ''">
+  <div class="input-group-append" *ngIf="filterDetails && filterDetails.append">
+    <span class="input-group-text" *ngIf="!filterDetails.icon">
+      {{filterDetails.append}}
+    </span>
+    <span class="input-group-text" *ngIf="filterDetails.icon">
+      <i *ngIf="filterDetails.append"
+         class="{{filterDetails.append}}" aria-hidden="true"></i>
+    </span>
+  </div>
+</div>
