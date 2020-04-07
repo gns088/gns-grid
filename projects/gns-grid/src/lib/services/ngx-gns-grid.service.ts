@@ -3,6 +3,7 @@ import { ReplaySubject } from 'rxjs';
 import { coerceBooleanProperty, GridColumnDef, GridConfig, GridPagination, GridState, RowSelectionConfig, SelectionModel } from '../types';
 import { GridPaginationConfig } from '../types/grid-pagination-config';
 import { coerceArray } from '../types/coerce-functions';
+import * as _ from 'lodash';
 
 @Injectable()
 export class NgxGnsGridService {
@@ -159,21 +160,7 @@ export class NgxGnsGridService {
   }
 
   set paginationConfig(value: GridPaginationConfig) {
-    this.paginationConfig.disabled = coerceBooleanProperty(value.disabled);
-    this.paginationConfig.hidePageSize = coerceBooleanProperty(value.hidePageSize);
-    this.paginationConfig.showFirstLastButtons = coerceBooleanProperty(value.showFirstLastButtons);
-    if (value.align) {
-      this.paginationConfig.align = value.align;
-    }
-    if (value.color) {
-      this.paginationConfig.color = value.color;
-    }
-    if (value.pageSizeOptions) {
-      this.paginationConfig.pageSizeOptions = value.pageSizeOptions;
-    }
-    if (value.position) {
-      this.paginationConfig.position = value.position;
-    }
+    value = _.merge(this.paginationConfig, value);
     this._paginationConfig = value;
   }
 

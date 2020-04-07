@@ -94,10 +94,10 @@ export class GridDateRangeFilterComponent implements OnInit {
   onChange() {
     setTimeout(() => {
       if (this.fromDate && this.toDate) {
-        this.filter[this.id] = [
-          new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString(),
-          new Date(`${this.toDate.month}/${this.toDate.day}/${this.toDate.year}`).toISOString()
-        ];
+        this.filter[this.id] = {
+          startDate: new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString(),
+          endDate: new Date(`${this.toDate.month}/${this.toDate.day}/${this.toDate.year}`).toISOString()
+        };
         this.matGridService.filterObservable$.next(this.filter);
       }
     });

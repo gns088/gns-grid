@@ -5,7 +5,24 @@
                 stickyHeader
                 [columnDef]="columns" [dataSource]="dataSource"></ngx-gns-grid>-->
   <!--  <i class="fa fa-user-circle fa-2x" aria-hidden="true"> </i>-->
+  <button class="btn btn-primary" (click)="onReset()">Reset</button>
   <div class="mt-4 shadow-sm">
-    <ngx-gns-grid [columnDef]="columns" [dataSource]="dataSource" tableBordered></ngx-gns-grid>
+    <ngx-gns-grid stripedRows="false"
+                  filterable
+                  [state]="state"
+                  (stateChange)="onStateChange($event)"
+                  [paginationConfig]="paginationConfig"
+                  [columnDef]="columns" [dataSource]="dataSource" [gridConfig]="gridConfig">
+      <ngx-gns-grid-column field="action">
+        <ng-template ngxGnsGridColumnTemplate let-dateItem let-index="index" let-value="value">
+          <button class="btn btn-sm btn-primary" (click)="onCloseClick(dateItem)">Close</button>
+        </ng-template>
+      </ngx-gns-grid-column>
+      <!--<ngx-gns-grid-column field="handle">
+        <ng-template ngxGnsGridColumnTemplate let-dateItem let-index="index" let-value="value">
+          handle {{dateItem.handle}}
+        </ng-template>
+      </ngx-gns-grid-column>-->
+    </ngx-gns-grid>
   </div>
 </div>

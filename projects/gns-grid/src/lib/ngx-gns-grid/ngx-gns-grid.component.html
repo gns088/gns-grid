@@ -14,24 +14,26 @@
     <tr
       class="{{ngxGnsGridService.gridConfig.gridHeaderRowClass}} {{ngxGnsGridService.gridConfig.gridHeaderRowClassFn && ngxGnsGridService.gridConfig.gridHeaderRowClassFn()}}"
       [ngClass]="ngxGnsGridService.gridConfig.gridHeaderRowNgClass"
-      [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() ? ngxGnsGridService.gridConfig.gridHeaderRowStyleFn && ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() : ngxGnsGridService.gridConfig.gridHeaderRowNgStyle ? ngxGnsGridService.gridConfig.gridHeaderRowNgStyle : {}">
+      [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderRowStyleFn ? ngxGnsGridService.gridConfig.gridHeaderRowStyleFn() : ngxGnsGridService.gridConfig.gridHeaderRowNgStyle ? ngxGnsGridService.gridConfig.gridHeaderRowNgStyle : {}">
       <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
           class="{{ngxGnsGridService.gridConfig.gridHeaderCellClass}} {{ngxGnsGridService.gridConfig.gridHeaderCellClassFn && ngxGnsGridService.gridConfig.gridHeaderCellClassFn(column, columnIndex)}}"
           [ngClass]="ngxGnsGridService.gridConfig.gridHeaderCellNgClass"
-          [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) ? ngxGnsGridService.gridConfig.gridHeaderCellStyleFn && ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.gridHeaderCellNgStyle ? ngxGnsGridService.gridConfig.gridHeaderCellNgStyle : {}"
+          [ngStyle]="ngxGnsGridService.gridConfig.gridHeaderCellStyleFn ? ngxGnsGridService.gridConfig.gridHeaderCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.gridHeaderCellNgStyle ? ngxGnsGridService.gridConfig.gridHeaderCellNgStyle : {}"
           [style.width.px]="column.width"
-          [style.min-width.px]="column.minWidth">
+          [style.min-width.px]="column.minWidth"
+          sortable
+          [state]="state"
+          [sortable]="column.id"
+          [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
+          (sort)="onSortChange($event)">
+        {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
+      </th>
+    </tr>
+    <tr *ngIf="ngxGnsGridService.filterable">
+      <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
         <div class="d-flex flex-column">
           <div class="table-filter"
                [class.no-filter-col]="!ngxGnsGridService.filterable || (ngxGnsGridService.filterable && column.filterable === false)">
-            <label class="mat-header-column-title"
-                   sortable
-                   [state]="state"
-                   [sortable]="column.id"
-                   [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
-                   (sort)="onSortChange($event)">
-              {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
-            </label>
             <ngx-mat-grid-filter-state [column]="column"
                                        [state]="state"
                                        [isClientSide]="ngxGnsGridService.isClientSide"
@@ -40,22 +42,30 @@
           </div>
         </div>
       </th>
+
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
         class="{{ngxGnsGridService.gridConfig.gridRowClass}} {{ngxGnsGridService.gridConfig.gridRowClassFn && ngxGnsGridService.gridConfig.gridRowClassFn(rowItem, rowItemIndex)}}"
         [ngClass]="ngxGnsGridService.gridConfig.gridRowNgClass"
-        [ngStyle]="ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, rowItemIndex) ? ngxGnsGridService.gridConfig.gridRowStyleFn && ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, index) : ngxGnsGridService.gridConfig.gridRowNgStyle ? ngxGnsGridService.gridConfig.gridRowNgStyle : {}">
+        [ngStyle]="ngxGnsGridService.gridConfig.gridRowStyleFn ? ngxGnsGridService.gridConfig.gridRowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.gridRowNgStyle ? ngxGnsGridService.gridConfig.gridRowNgStyle : {}">
       <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
         <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
             [ngClass]="column.ngClass"
-            [ngStyle]="column.styleFn && column.styleFn(rowItem,rowItemIndex) ? column.styleFn && column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
+            [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
           <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
                [ngClass]="column.cellNgClass"
-               [ngStyle]="column.cellStyleFn && column.cellStyleFn(rowItem,rowItemIndex) ? column.cellStyleFn && column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
-            <label class="grid-column-cell-text">
+               [ngStyle]="column.cellStyleFn ? column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
+            <label class="grid-column-cell-text" *ngIf="!getColumnTemplate(column)">
               {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
+            </label>
+            <label class="grid-column-cell-text" *ngIf="getColumnTemplate(column)">
+              <ng-container *ngTemplateOutlet="getColumnTemplate(column); context:{
+                  $implicit:rowItem,
+                  column: column,
+                  index:rowItemIndex
+              }"></ng-container>
             </label>
           </div>
         </td>

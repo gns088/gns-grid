@@ -13,6 +13,7 @@ export class NgxGnsGridStateService {
   }
 
   set state(value: GridState) {
+    value = _.merge(this.state, value);
     this._state = value;
   }
 

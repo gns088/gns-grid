@@ -1,12 +1,9 @@
-import { Directive, Input, TemplateRef } from '@angular/core';
+import { Directive, TemplateRef } from '@angular/core';
 
 @Directive({
-  selector: 'ng-template[ngx-gns-grid-column]'
+  selector: 'ng-template[ngxGnsGridColumnTemplate]'
 })
 export class NgxGnsGridColumnDirective {
-
-  @Input('field') field: string;
-
-  constructor(public templateRef: TemplateRef<string>) {
+  constructor(public templateRef: TemplateRef<any>) {
   }
 }

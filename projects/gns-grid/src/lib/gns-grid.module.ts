@@ -9,10 +9,11 @@ import { MatGridListFilterComponent } from './component/mat-grid-list-filter/mat
 import { MatGridFilterStateComponent } from './component/mat-grid-filter-state/mat-grid-filter-state.component';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbPaginationModule, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxGnsGridColumnDirective } from './directives/ngx-gns-grid-column.directive';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { GridDateRangeFilterComponent } from './component/mat-grid-date-filter/grid-date-range-filter/grid-date-range-filter.component';
 import { GridDateFilterComponent } from './component/mat-grid-date-filter/grid-date-filter/grid-date-filter.component';
+import { NgxGnsGridColumnDirective } from './directives/ngx-gns-grid-column.directive';
+import { NgxGnsGridColumnComponent } from './template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';
 
 const filterComponents = [
   MatGridFilterStateComponent,
@@ -22,19 +23,27 @@ const filterComponents = [
   GridDateRangeFilterComponent,
   GridDateFilterComponent
 ];
+const COMPONENTS_EXPORT = [NgxGnsGridComponent, NgxGnsGridColumnDirective, NgxGnsGridColumnComponent];
+const COMPONENTS_ENTRY = [];
+const COMPONENTS = [...COMPONENTS_EXPORT, ...COMPONENTS_ENTRY,
+  filterComponents, ReduceValuePipe, GridSortColumnDirective];
+
+const MODULES_EXPORT = [];
+const MODULES = [...MODULES_EXPORT,
+  CommonModule,
+  FormsModule,
+  NgSelectModule,
+  NgbDropdownModule,
+  NgbPaginationModule,
+  NgbDatepickerModule,
+  NgbTimepickerModule
+];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgSelectModule,
-    NgbDropdownModule,
-    NgbPaginationModule,
-    NgbDatepickerModule,
-    NgbTimepickerModule,
-  ],
-  declarations: [NgxGnsGridComponent, filterComponents, ReduceValuePipe, GridSortColumnDirective, NgxGnsGridColumnDirective],
-  exports: [NgxGnsGridComponent],
+  declarations: [...COMPONENTS],
+  entryComponents: [...COMPONENTS_ENTRY],
+  imports: [...MODULES],
+  exports: [...MODULES_EXPORT, ...COMPONENTS_EXPORT]
 })
 export class GnsGridModule {
 }

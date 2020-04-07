@@ -1,10 +1,24 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TrackByFunction, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ContentChildren,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  TrackByFunction,
+  ViewEncapsulation
+} from '@angular/core';
 import { NgxGnsGridService } from '../services/ngx-gns-grid.service';
 import { NgxGnsGridStateService } from '../services/ngx-gns-grid-state.service';
 import { GridColumnDef, GridConfig, GridPagination, GridSort, GridState, RowSelectionConfig, SelectionModel } from '../types';
 import { GridPaginationConfig } from '../types/grid-pagination-config';
 import { Subscription } from 'rxjs';
 import { GridUtils } from '../utils';
+import { NgxGnsGridColumnComponent } from '../template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';
 
 @Component({
   selector: 'ngx-gns-grid',
@@ -13,7 +27,7 @@ import { GridUtils } from '../utils';
   encapsulation: ViewEncapsulation.None,
   providers: [NgxGnsGridService, NgxGnsGridStateService]
 })
-export class NgxGnsGridComponent implements OnInit, OnDestroy {
+export class NgxGnsGridComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * store state for active grid, store all information about sorting, filtering and pagination
    * */
@@ -23,8 +37,8 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   }
 
   set state(value: GridState) {
-    this.ngxGnsGridService.stateObservable$.next(value);
     this.ngxGnsGridStateService.state = value;
+    this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
   }
 
   /**
@@ -192,6 +206,8 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   private sortSubscription: Subscription;
   private paginationSubscription: Subscription;
 
+  @ContentChildren(NgxGnsGridColumnComponent, {descendants: true}) columnTemplates: QueryList<NgxGnsGridColumnComponent>;
+
   @Output('stateChange') stateChange: EventEmitter<GridState> = new EventEmitter<GridState>();
   @Output('filterChange') filterChange: EventEmitter<Map<string, any>> = new EventEmitter<Map<string, any>>();
   @Output('sortChange') sortChange: EventEmitter<Map<string, string>> = new EventEmitter<Map<string, string>>();
@@ -199,6 +215,18 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   @Output('selectionChange') selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
   constructor(private ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
+  }
+
+  ngAfterViewInit(): void {
+    console.log('ngAfterContentInit', this.columnTemplates);
+  }
+
+  getColumnTemplate(column: GridColumnDef): TemplateRef<any> {
+    const findObj = (this.columnTemplates || []).find(d => d.field === column.id);
+    if (findObj) {
+      return findObj.columnTemplate.templateRef;
+    }
+    return null;
   }
 
   ngOnInit() {
