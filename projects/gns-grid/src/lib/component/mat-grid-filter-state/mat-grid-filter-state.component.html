@@ -8,16 +8,13 @@
                                 [filter]="state.filter"></ngx-mat-grid-number-filter>
   </ng-container>
   <ng-container *ngSwitchCase="'date'">
-    <ngx-mat-grid-date-filter type="date" [id]="column.id" [filterDetails]="column.filterDetails"
-                              [filter]="state.filter"></ngx-mat-grid-date-filter>
-  </ng-container>
-  <ng-container *ngSwitchCase="'dateTime'">
-    <ngx-mat-grid-date-filter type="dateTime" [id]="column.id" [filterDetails]="column.filterDetails"
-                              [filter]="state.filter"></ngx-mat-grid-date-filter>
-  </ng-container>
-  <ng-container *ngSwitchCase="'time'">
-    <ngx-mat-grid-date-filter type="time" [id]="column.id" [filterDetails]="column.filterDetails"
-                              [filter]="state.filter"></ngx-mat-grid-date-filter>
+    <ngx-grid-date-filter *ngIf="!isClientSide && !column.filterDetails.range"
+                          type="date" [id]="column.id" [filterDetails]="column.filterDetails"
+                          [filter]="state.filter"></ngx-grid-date-filter>
+    <ngx-grid-date-range-filter *ngIf="!isClientSide && column.filterDetails.range"
+                                type="date" [id]="column.id" [filterDetails]="column.filterDetails"
+                                [filter]="state.filter"></ngx-grid-date-range-filter>
+    <!--    *ngIf="!isClientSide" -->
   </ng-container>
   <ng-container *ngSwitchCase="'singleSelect'">
     <ngx-mat-grid-list-filter type="singleSelect" [id]="column.id" [filterDetails]="column.filterDetails"

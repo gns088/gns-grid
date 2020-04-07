@@ -1,13 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GridColumnFilterDef } from '../../types';
-import { NgxGnsGridService } from '../../services/ngx-gns-grid.service';
+import { GridColumnFilterDef } from '../../../types';
+import { NgxGnsGridService } from '../../../services/ngx-gns-grid.service';
+import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'ngx-mat-grid-date-filter',
-  templateUrl: './mat-grid-date-filter.component.html',
-  styleUrls: ['./mat-grid-date-filter.component.scss']
+  selector: 'ngx-grid-date-filter',
+  templateUrl: './grid-date-filter.component.html',
+  styleUrls: ['./grid-date-filter.component.scss']
 })
-export class MatGridDateFilterComponent implements OnInit {
+export class GridDateFilterComponent implements OnInit {
 
   private _filterDetails: GridColumnFilterDef = new GridColumnFilterDef();
   private _id: string;
@@ -15,6 +16,7 @@ export class MatGridDateFilterComponent implements OnInit {
 
   @Input('type') type: 'date' | 'dateTime' | 'time' = 'date';
   @Input('range') range: boolean = true;
+  fromDate: NgbDate;
 
   @Input()
   get filter(): Map<string, any> {
@@ -48,20 +50,15 @@ export class MatGridDateFilterComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  onValueChange(event) {
-    this.filter[this.id]['date'] = event;
-  }
-
-  onInitFilter() {
-    if (!this.filter[this.id]) {
-      this.filter[this.id] = new Map<string, any>();
+    if (!this.filterDetails.icon && !this.filterDetails.append) {
+      this.filterDetails.icon = true;
+      this.filterDetails.append = 'fa fa-calendar';
     }
   }
 
   onChange() {
     setTimeout(() => {
+      this.filter[this.id] = new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString();
       this.matGridService.filterObservable$.next(this.filter);
     });
   }

@@ -11,7 +11,9 @@
   </div>
   <input readonly type="text" [name]="'string-'+id+'-filter'"
          (ngModelChange)="onChange()"
-         [(ngModel)]="filter[id]"
+         [(ngModel)]="fromDate"
+         [maxDate]="filterDetails.maxDate"
+         [minDate]="filterDetails.minDate"
          id="button-basic" ngbDatepicker #ngbDatepickerRef="ngbDatepicker"
          (focus)="ngbDatepickerRef.open()"
          [placeholder]="filterDetails.placeholder? filterDetails.placeholder : ''">
@@ -26,5 +28,3 @@
     </span>
   </div>
 </div>
-
-

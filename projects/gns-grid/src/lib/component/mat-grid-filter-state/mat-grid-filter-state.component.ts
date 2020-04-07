@@ -29,4 +29,15 @@ export class MatGridFilterStateComponent {
   set state(value: GridState) {
     this._state = value;
   }
+
+  private _isClientSide: boolean;
+
+  @Input()
+  get isClientSide(): boolean {
+    return this._isClientSide;
+  }
+
+  set isClientSide(value: boolean) {
+    this._isClientSide = value;
+  }
 }

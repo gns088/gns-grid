@@ -25,8 +25,7 @@ export class AppComponent {
       id: 'first',
       headerTitle: 'First',
       filterDetails: {
-        icon: true,
-        append: 'fa fa-user-circle',
+        range: true,
         type: 'date',
         placeholder: 'Search'
       }

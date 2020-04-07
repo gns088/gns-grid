@@ -1,3 +1,5 @@
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+
 export type GridColumnFilterType = 'text' | 'number' | 'date' | 'singleSelect' | 'multiSelect';
 
 // | 'dateTime' | 'time'
@@ -19,4 +21,6 @@ export class GridColumnFilterDef {
    * for date and time filter
    * */
   range?: boolean;
+  maxDate?: NgbDateStruct;
+  minDate?: NgbDateStruct;
 }

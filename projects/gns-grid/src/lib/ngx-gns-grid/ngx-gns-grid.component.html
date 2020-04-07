@@ -32,7 +32,9 @@
                    (sort)="onSortChange($event)">
               {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
             </label>
-            <ngx-mat-grid-filter-state [column]="column" [state]="state"
+            <ngx-mat-grid-filter-state [column]="column"
+                                       [state]="state"
+                                       [isClientSide]="ngxGnsGridService.isClientSide"
                                        *ngIf="(ngxGnsGridService.filterable && column.filterable === undefined) || (ngxGnsGridService.filterable && column.filterable)">
             </ngx-mat-grid-filter-state>
           </div>

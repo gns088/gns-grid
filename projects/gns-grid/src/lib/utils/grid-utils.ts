@@ -112,24 +112,24 @@ export class GridUtils {
                 data = this.filter(data, fieldId, filter[fieldId].date, 'equalsDate', true);
               }
               break;
-            case 'dateTime':
-              if (filterDetail.range) {
-                data = this.filter(data, fieldId, filter[fieldId].date, 'in', true);
-                data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
-                data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
-              } else {
-                data = this.filter(data, fieldId, filter[fieldId].date, 'equalsDate', true);
-                data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
-              }
-              break;
-            case 'time':
-              if (filterDetail.range) {
-                data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
-                data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
-              } else {
-                data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
-              }
-              break;
+            // case 'dateTime':
+            //   if (filterDetail.range) {
+            //     data = this.filter(data, fieldId, filter[fieldId].date, 'in', true);
+            //     data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
+            //     data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
+            //   } else {
+            //     data = this.filter(data, fieldId, filter[fieldId].date, 'equalsDate', true);
+            //     data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
+            //   }
+            //   break;
+            // case 'time':
+            //   if (filterDetail.range) {
+            //     data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
+            //     data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
+            //   } else {
+            //     data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
+            //   }
+            //   break;
             case 'multiSelect':
               data = this.filter(data, fieldId, filter[fieldId], 'in');
               break;

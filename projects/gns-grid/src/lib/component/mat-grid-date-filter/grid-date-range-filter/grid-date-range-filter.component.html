@@ -1,0 +1,60 @@
+<div class="input-group date-filter" *ngIf="filterDetails"
+     ngbDropdown #myDrop="ngbDropdown">
+  <div class="input-group-prepend" *ngIf="filterDetails.prepend">
+    <span class="input-group-text" *ngIf="!filterDetails.icon">
+      {{filterDetails.prepend}}
+    </span>
+    <span class="input-group-text" *ngIf="filterDetails.icon">
+        <i *ngIf="filterDetails.prepend"
+           class="{{filterDetails.prepend}}" aria-hidden="true"></i>
+    </span>
+  </div>
+  <div class="form-group hidden">
+    <div class="input-group">
+      <input name="datepicker"
+             class="form-control"
+             ngbDatepicker
+             #datepicker="ngbDatepicker"
+             [autoClose]="'outside'"
+             (dateSelect)="onDateSelection($event)"
+             [displayMonths]="2"
+             [dayTemplate]="t"
+             outsideDays="hidden"
+             [startDate]="fromDate!"
+             (closed)="onChange()">
+      <ng-template #t let-date let-focused="focused">
+        <span class="custom-day"
+              [class.focused]="focused"
+              [class.range]="isRange(date)"
+              [class.faded]="isHovered(date) || isInside(date)"
+              (mouseenter)="hoveredDate = date"
+              (mouseleave)="hoveredDate = null">
+          {{ date.day }}
+        </span>
+      </ng-template>
+    </div>
+  </div>
+  <input #dpFromDate
+         class="form-control" placeholder="yyyy-mm-dd"
+         name="dpFromDate"
+         [value]="formatter.format(fromDate) + (toDate ? '-' + formatter.format(toDate):'')"
+         (input)="fromDate = validateInput(fromDate, dpFromDate.value);"
+         (click)="datepicker.open()"
+         (focus)="datepicker.toggle()">
+  <input #dpToDate
+         hidden
+         class="form-control" placeholder="yyyy-mm-dd"
+         name="dpToDate"
+         [value]="formatter.format(toDate)"
+         (input)="toDate = validateInput(toDate, dpToDate.value)">
+  <div class="input-group-append" *ngIf="filterDetails && filterDetails.append"
+       (click)="datepicker.toggle()">
+    <span class="input-group-text" *ngIf="!filterDetails.icon">
+      {{filterDetails.append}}
+    </span>
+    <span class="input-group-text" *ngIf="filterDetails.icon">
+      <i *ngIf="filterDetails.append"
+         class="{{filterDetails.append}}" aria-hidden="true"></i>
+    </span>
+  </div>
+</div>
