@@ -3,6 +3,7 @@ export * from './coerce-functions';
 export * from './selection-model';
 export * from './grid-state';
 export * from './grid-pagination';
+export * from './grid-pagination-config';
 export * from './grid-column-filter-def';
 export * from './grid-column-def';
 export * from './grid-config';

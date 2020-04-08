@@ -12,8 +12,16 @@ import {
 } from '@angular/core';
 import { NgxGnsGridService } from '../services/ngx-gns-grid.service';
 import { NgxGnsGridStateService } from '../services/ngx-gns-grid-state.service';
-import { GridColumnDef, GridConfig, GridPagination, GridSort, GridState, RowSelectionConfig, SelectionModel } from '../types';
-import { GridPaginationConfig } from '../types/grid-pagination-config';
+import {
+  GridColumnDef,
+  GridConfig,
+  GridPagination,
+  GridPaginationConfig,
+  GridSort,
+  GridState,
+  RowSelectionConfig,
+  SelectionModel
+} from '../types';
 import { Subscription } from 'rxjs';
 import { GridUtils } from '../utils';
 import { NgxGnsGridColumnComponent } from '../template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';

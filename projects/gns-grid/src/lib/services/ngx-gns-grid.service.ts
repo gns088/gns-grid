@@ -1,8 +1,16 @@
 import { Injectable, isDevMode, TrackByFunction } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
-import { coerceBooleanProperty, GridColumnDef, GridConfig, GridPagination, GridState, RowSelectionConfig, SelectionModel } from '../types';
-import { GridPaginationConfig } from '../types/grid-pagination-config';
-import { coerceArray } from '../types/coerce-functions';
+import {
+  coerceArray,
+  coerceBooleanProperty,
+  GridColumnDef,
+  GridConfig,
+  GridPagination,
+  GridPaginationConfig,
+  GridState,
+  RowSelectionConfig,
+  SelectionModel
+} from '../types';
 import * as _ from 'lodash';
 
 @Injectable()
