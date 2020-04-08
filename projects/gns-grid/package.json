@@ -1,5 +1,11 @@
 {
   "name": "@gns/ngx-gns-grid",
+  "author": {
+    "email": "kumarganesh088@gmail.com",
+    "name": "Ganeshram Kumhar",
+    "url": "https://github.com/gns088"
+  },
+  "description": "Bootstrap Grid",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^8.2.14",

@@ -12,8 +12,13 @@ import { NgbDatepickerModule, NgbDropdownModule, NgbPaginationModule, NgbTimepic
 import { NgSelectModule } from '@ng-select/ng-select';
 import { GridDateRangeFilterComponent } from './component/mat-grid-date-filter/grid-date-range-filter/grid-date-range-filter.component';
 import { GridDateFilterComponent } from './component/mat-grid-date-filter/grid-date-filter/grid-date-filter.component';
-import { NgxGnsGridColumnDirective } from './directives/ngx-gns-grid-column.directive';
-import { NgxGnsGridColumnComponent } from './template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';
+import {
+  NgxGnsGridColumnCellTemplateDirective,
+  NgxGnsGridColumnComponent,
+  NgxGnsGridColumnFilterTemplateDirective,
+  NgxGnsGridColumnFooterTemplateDirective
+} from './template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';
+import { FindColumnTemplatePipe } from './pipes/find-column-template.pipe';
 
 const filterComponents = [
   MatGridFilterStateComponent,
@@ -23,7 +28,13 @@ const filterComponents = [
   GridDateRangeFilterComponent,
   GridDateFilterComponent
 ];
-const COMPONENTS_EXPORT = [NgxGnsGridComponent, NgxGnsGridColumnDirective, NgxGnsGridColumnComponent];
+const COMPONENTS_EXPORT = [
+  NgxGnsGridComponent,
+  NgxGnsGridColumnComponent,
+  NgxGnsGridColumnCellTemplateDirective,
+  NgxGnsGridColumnFilterTemplateDirective,
+  NgxGnsGridColumnFooterTemplateDirective
+];
 const COMPONENTS_ENTRY = [];
 const COMPONENTS = [...COMPONENTS_EXPORT, ...COMPONENTS_ENTRY,
   filterComponents, ReduceValuePipe, GridSortColumnDirective];
@@ -40,7 +51,7 @@ const MODULES = [...MODULES_EXPORT,
 ];
 
 @NgModule({
-  declarations: [...COMPONENTS],
+  declarations: [...COMPONENTS, FindColumnTemplatePipe],
   entryComponents: [...COMPONENTS_ENTRY],
   imports: [...MODULES],
   exports: [...MODULES_EXPORT, ...COMPONENTS_EXPORT]

@@ -14,7 +14,7 @@ export declare type gridHeaderCellClassFn = (column: any, index: number) => stri
 export declare type gridHeaderCellStyle = (column: any, index: number) => {
   [key: string]: any;
 };
-export declare type gridRowClassFn = (row: any, index: number) => string | string[] | Set<string>;
-export declare type gridRowStyle = (row: any, index: number) => {
+export declare type gridRowClassFn = (dateItem: any, index: number) => string | string[] | Set<string>;
+export declare type gridRowStyle = (dateItem: any, index: number) => {
   [key: string]: any;
 };

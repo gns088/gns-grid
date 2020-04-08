@@ -6,16 +6,28 @@
                 [columnDef]="columns" [dataSource]="dataSource"></ngx-gns-grid>-->
   <!--  <i class="fa fa-user-circle fa-2x" aria-hidden="true"> </i>-->
   <button class="btn btn-primary" (click)="onReset()">Reset</button>
-  <div class="mt-4 shadow-sm">
-    <ngx-gns-grid stripedRows="false"
+  <div class="mt-4 p-5 shadow-sm">
+    <ngx-gns-grid stripedRows="true"
                   filterable
                   [state]="state"
                   (stateChange)="onStateChange($event)"
                   [paginationConfig]="paginationConfig"
+                  showFooter
                   [columnDef]="columns" [dataSource]="dataSource" [gridConfig]="gridConfig">
-      <ngx-gns-grid-column field="action">
-        <ng-template ngxGnsGridColumnTemplate let-dateItem let-index="index" let-value="value">
-          <button class="btn btn-sm btn-primary" (click)="onCloseClick(dateItem)">Close</button>
+      <ngx-gns-grid-column id="first">
+        <ng-template ngxGnsGridColumnFooterTemplate let-column let-index="index">
+          Totol: 10
+        </ng-template>
+      </ngx-gns-grid-column>
+      <ngx-gns-grid-column id="action">
+        <ng-template ngxGnsGridColumnFilterTemplate let-column let-index="index">
+          No Filter
+        </ng-template>
+        <ng-template ngxGnsGridColumnCellTemplate let-dateItem let-index="index" let-value="value">
+          <button class="btn btn-sm btn-outline-primary" (click)="onCloseClick(dateItem)">Close</button>
+        </ng-template>
+        <ng-template ngxGnsGridColumnFooterTemplate let-column let-index="index">
+          <button class="btn btn-sm btn-primary" (click)="onCloseClick(column)">Close</button>
         </ng-template>
       </ngx-gns-grid-column>
       <!--<ngx-gns-grid-column field="handle">

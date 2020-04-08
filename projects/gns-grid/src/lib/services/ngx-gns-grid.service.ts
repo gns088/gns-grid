@@ -16,6 +16,7 @@ export class NgxGnsGridService {
   private _localDataSource: Array<any> = [];
   private _displayedColumns: string[] = [];
   private _columnDef: GridColumnDef[];
+  private _showFooter: boolean = false;
   private _pageable: boolean = true;
   private _sortable: boolean = true;
   private _filterable: boolean = true;
@@ -25,7 +26,7 @@ export class NgxGnsGridService {
   private _stripedRows: boolean = true;
   private _hoverRows: boolean = true;
   private _tableShadow: boolean = true;
-  private _tableBordered: boolean = false;
+  private _tableBordered: boolean = true;
   private _tableSmall: boolean = true;
   private _tableDark: boolean = false;
   private _stickyHeader: boolean = false;
@@ -115,6 +116,14 @@ export class NgxGnsGridService {
     this._columnDef = coerceArray(value);
   }
 
+  get showFooter(): boolean {
+    return this._showFooter;
+  }
+
+  set showFooter(value: boolean) {
+    this._showFooter = coerceBooleanProperty(value);
+  }
+
   get pageable(): boolean {
     return this._pageable;
   }
@@ -152,6 +161,7 @@ export class NgxGnsGridService {
   }
 
   set gridConfig(value: GridConfig) {
+    value = _.merge(this.gridConfig, value);
     this._gridConfig = value;
   }
 

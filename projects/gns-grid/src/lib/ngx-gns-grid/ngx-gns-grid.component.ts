@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ContentChildren,
   EventEmitter,
@@ -8,7 +7,6 @@ import {
   OnInit,
   Output,
   QueryList,
-  TemplateRef,
   TrackByFunction,
   ViewEncapsulation
 } from '@angular/core';
@@ -27,7 +25,7 @@ import { NgxGnsGridColumnComponent } from '../template-components/ngx-gns-grid-c
   encapsulation: ViewEncapsulation.None,
   providers: [NgxGnsGridService, NgxGnsGridStateService]
 })
-export class NgxGnsGridComponent implements OnInit, OnDestroy, AfterViewInit {
+export class NgxGnsGridComponent implements OnInit, OnDestroy {
   /**
    * store state for active grid, store all information about sorting, filtering and pagination
    * */
@@ -109,6 +107,14 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input('pageable')
   set pageable(value: boolean) {
     this.ngxGnsGridService.pageable = value;
+  }
+
+  /**
+   * Enable footer row
+   * */
+  @Input('showFooter')
+  set showFooter(value: boolean) {
+    this.ngxGnsGridService.showFooter = value;
   }
 
   /**
@@ -214,19 +220,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output('pageChange') pageChange: EventEmitter<GridPagination> = new EventEmitter<GridPagination>();
   @Output('selectionChange') selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
-  constructor(private ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
-  }
-
-  ngAfterViewInit(): void {
-    console.log('ngAfterContentInit', this.columnTemplates);
-  }
-
-  getColumnTemplate(column: GridColumnDef): TemplateRef<any> {
-    const findObj = (this.columnTemplates || []).find(d => d.field === column.id);
-    if (findObj) {
-      return findObj.columnTemplate.templateRef;
-    }
-    return null;
+  constructor(public ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
   }
 
   ngOnInit() {

@@ -25,6 +25,7 @@ export class AppComponent {
     {
       id: 'first',
       headerTitle: 'First',
+      width: 200,
       filterDetails: {
         icon: true,
         range: true,
@@ -45,15 +46,29 @@ export class AppComponent {
       id: 'action',
       headerTitle: 'Action',
       sortable: false,
-      filterable: false,
+      filterable: true,
       width: 110
     }
   ];
   dataSource: any[] = [];
-  gridConfig: GridConfig = {};
+  gridConfig: GridConfig = {
+    footerClass: 'bg-primary',
+    footerCellClassFn: column => {
+      return column.id === 'first' ? 'bg-danger' : '';
+    }
+    // headerRowClass: 'bg-primary text-white',
+    // headerFilterRowClass: 'bg-secondary',
+    // bodyClass: 'bg-info shadow',
+    // rowClassFn: (dateItem, index) => {
+    //   if (dateItem.first === 'Mark3') {
+    //     return 'bg-danger';
+    //   }
+    //   return null;
+    // }
+  };
   paginationConfig: GridPaginationConfig = {
-    align: 'end',
-    position: 'top'
+    position: 'bottom',
+    align: 'end'
   };
   state: GridState = new GridState();
 

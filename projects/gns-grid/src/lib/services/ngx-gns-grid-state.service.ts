@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GridPagination, GridState } from '../types';
+import * as _ from 'lodash';
 
 @Injectable()
 export class NgxGnsGridStateService {
