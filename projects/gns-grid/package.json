@@ -1,14 +1,19 @@
 {
-  "name": "@gns/ngx-gns-grid",
+  "name": "@kimaya/ngx-gns-grid",
   "author": {
     "email": "kumarganesh088@gmail.com",
     "name": "Ganeshram Kumhar",
     "url": "https://github.com/gns088"
   },
   "description": "Bootstrap Grid",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14"
+    "@angular/core": "^8.2.14",
+    "@ng-bootstrap/ng-bootstrap": "^4.2.1",
+    "@ng-select/ng-select": "^1.0.2",
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
   }
 }
