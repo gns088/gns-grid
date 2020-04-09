@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { GridColumnFilterDef } from '../../../types';
 import { NgxGnsGridService } from '../../../services/ngx-gns-grid.service';
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'ngx-grid-date-filter',
   templateUrl: './grid-date-filter.component.html',
   styleUrls: ['./grid-date-filter.component.scss']
 })
-export class GridDateFilterComponent implements OnInit {
+export class GridDateFilterComponent implements OnInit, OnDestroy {
 
   private _filterDetails: GridColumnFilterDef = new GridColumnFilterDef();
   private _id: string;
@@ -46,7 +47,9 @@ export class GridDateFilterComponent implements OnInit {
     this._filterDetails = value;
   }
 
-  constructor(public matGridService: NgxGnsGridService) {
+  private subscription: Subscription;
+
+  constructor(public ngxGnsGridService: NgxGnsGridService) {
   }
 
   ngOnInit() {
@@ -54,12 +57,24 @@ export class GridDateFilterComponent implements OnInit {
       this.filterDetails.icon = true;
       this.filterDetails.append = 'fa fa-calendar';
     }
+
+    this.subscription = this.ngxGnsGridService.stateObservable$.subscribe((state) => {
+      if (!state.filter[this.id]) {
+        this.fromDate = null;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onChange() {
     setTimeout(() => {
       this.filter[this.id] = new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString();
-      this.matGridService.filterObservable$.next(this.filter);
+      this.ngxGnsGridService.filterObservable$.next(this.filter);
     });
   }
 }

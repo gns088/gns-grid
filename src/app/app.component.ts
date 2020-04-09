@@ -74,6 +74,9 @@ export class AppComponent {
   state: GridState = new GridState();
 
   constructor() {
+    this.state.pageIndex = 2;
+    this.state.total = 20;
+    this.state.pageSize = 10;
     const length = 20;
     for (let i = 1; i <= length; i++) {
       this.dataSource.push({

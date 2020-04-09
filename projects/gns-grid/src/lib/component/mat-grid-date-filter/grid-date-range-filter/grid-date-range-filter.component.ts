@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { GridColumnFilterDef } from '../../../types';
 import { NgxGnsGridService } from '../../../services/ngx-gns-grid.service';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'ngx-grid-date-range-filter',
   templateUrl: './grid-date-range-filter.component.html',
   styleUrls: ['./grid-date-range-filter.component.scss']
 })
-export class GridDateRangeFilterComponent implements OnInit {
+export class GridDateRangeFilterComponent implements OnInit, OnDestroy {
 
   private _filterDetails: GridColumnFilterDef = new GridColumnFilterDef();
   private _id: string;
@@ -50,16 +51,28 @@ export class GridDateRangeFilterComponent implements OnInit {
     this._filterDetails = value;
   }
 
-  constructor(public matGridService: NgxGnsGridService, private calendar: NgbCalendar,
+  private subscription: Subscription;
+
+  constructor(public ngxGnsGridService: NgxGnsGridService, private calendar: NgbCalendar,
               public formatter: NgbDateParserFormatter) {
-    this.fromDate = calendar.getToday();
-    this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
 
   ngOnInit() {
     if (!this.filterDetails.icon && !this.filterDetails.append) {
       this.filterDetails.icon = true;
       this.filterDetails.append = 'fa fa-calendar';
+    }
+    this.subscription = this.ngxGnsGridService.stateObservable$.subscribe((state) => {
+      if (!state.filter[this.id]) {
+        this.fromDate = null;
+        this.toDate = null;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
@@ -98,7 +111,7 @@ export class GridDateRangeFilterComponent implements OnInit {
           startDate: new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString(),
           endDate: new Date(`${this.toDate.month}/${this.toDate.day}/${this.toDate.year}`).toISOString()
         };
-        this.matGridService.filterObservable$.next(this.filter);
+        this.ngxGnsGridService.filterObservable$.next(this.filter);
       }
     });
   }

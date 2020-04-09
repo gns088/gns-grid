@@ -47,7 +47,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   set state(value: GridState) {
     this.ngxGnsGridStateService.state = value;
-    this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
+    // this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
   }
 
   /**
@@ -239,6 +239,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.stateSubscription = this.ngxGnsGridService.stateObservable$.subscribe((value => {
+      console.log('state change');
       this.ngxGnsGridStateService.filter = value.filter;
       this.state.filter = value.filter;
       this.ngxGnsGridStateService.sort = value.sort;
@@ -398,7 +399,6 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
         }
       });
     }
-    console.log(this.ngxGnsGridService.selection);
   }
 
 }

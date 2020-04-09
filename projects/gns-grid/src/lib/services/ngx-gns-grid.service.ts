@@ -27,7 +27,7 @@ export class NgxGnsGridService {
   private _pageable: boolean = true;
   private _sortable: boolean = true;
   private _filterable: boolean = true;
-  private _isClientSide: boolean = true;
+  private _isClientSide: boolean = false;
   private _gridConfig: GridConfig = new GridConfig();
   private _paginationConfig: GridPaginationConfig = new GridPaginationConfig();
   private _stripedRows: boolean = true;
