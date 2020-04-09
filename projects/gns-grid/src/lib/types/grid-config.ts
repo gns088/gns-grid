@@ -3,6 +3,7 @@ import { GridClassFn, gridHeaderCellClassFn, gridHeaderCellStyle, gridRowClassFn
 export class GridConfig {
   headerPosition?: 'top' | 'bottom' | 'both' = 'top';
   filterRowPosition?: 'top' | 'bottom' | 'both' = 'top';
+  activeRowClass?: string = 'bg-secondary';
   gridClass?: string;
   gridClassFn?: GridClassFn;
   gridNgStyle?: object;

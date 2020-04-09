@@ -22,7 +22,6 @@ export class NgxGnsGridService {
   private _trackByFn: TrackByFunction<any>;
   private _dataSource: Array<any> = [];
   private _localDataSource: Array<any> = [];
-  private _displayedColumns: string[] = [];
   private _columnDef: GridColumnDef[];
   private _showFooter: boolean = false;
   private _pageable: boolean = true;
@@ -104,16 +103,8 @@ export class NgxGnsGridService {
 
   set localDataSource(value: Array<any>) {
     if (this.localDataSource !== value) {
-      this._localDataSource = JSON.parse(JSON.stringify(value));
+      this._localDataSource = value;
     }
-  }
-
-  get displayedColumns(): string[] {
-    return this._displayedColumns;
-  }
-
-  set displayedColumns(value: string[]) {
-    this._displayedColumns = value;
   }
 
   get columnDef(): GridColumnDef[] {
@@ -211,14 +202,11 @@ export class NgxGnsGridService {
   }
 
   set selectable(value: boolean) {
-    this.selectable = coerceBooleanProperty(value);
-    if (this.displayedColumns.indexOf('select') === -1) {
-      this.displayedColumns.splice(0, 0, 'select');
-    }
+    this._selectable = coerceBooleanProperty(value);
     this.selection = new SelectionModel<any>(
       this.selectableConfig.multiple,
       []
-    );
+    )
   }
 
   get selectableConfig(): RowSelectionConfig {
@@ -226,14 +214,13 @@ export class NgxGnsGridService {
   }
 
   set selectableConfig(value: RowSelectionConfig) {
-    if (value.columnId) {
-      this.selectableConfig.columnId = value.columnId;
-    }
-    this.selectableConfig.multiple = coerceBooleanProperty(value.multiple);
+    value = _.merge(this.selectableConfig, value);
+    value.multiple = coerceBooleanProperty(value.multiple);
+    this._selectableConfig = value;
     this.selection = new SelectionModel<any>(
       this.selectableConfig.multiple,
       []
-    );
+    )
   }
 
   get selectedKeys(): any[] {

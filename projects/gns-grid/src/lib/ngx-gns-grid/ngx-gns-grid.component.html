@@ -28,12 +28,20 @@
       class="{{ngxGnsGridService.gridConfig.bodyClass}} {{ngxGnsGridService.gridConfig.bodyClassFn && ngxGnsGridService.gridConfig.bodyClassFn()}}"
       [ngStyle]="ngxGnsGridService.gridConfig.bodyStyleFn ? ngxGnsGridService.gridConfig.bodyStyleFn() : ngxGnsGridService.gridConfig.bodyNgStyle ? ngxGnsGridService.gridConfig.bodyNgStyle : {}">
     <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
-        class="{{ngxGnsGridService.gridConfig.rowClass}} {{ngxGnsGridService.gridConfig.rowClassFn && ngxGnsGridService.gridConfig.rowClassFn(rowItem, rowItemIndex)}}"
-        [ngStyle]="ngxGnsGridService.gridConfig.rowStyleFn ? ngxGnsGridService.gridConfig.rowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.rowNgStyle ? ngxGnsGridService.gridConfig.rowNgStyle : {}">
+        class="{{ngxGnsGridService.gridConfig.rowClass}} {{ngxGnsGridService.gridConfig.rowClassFn && ngxGnsGridService.gridConfig.rowClassFn(rowItem, rowItemIndex)}}
+                {{ngxGnsGridService.selection.isSelected(rowItem) ? ngxGnsGridService.gridConfig.activeRowClass : ''}}"
+        [ngStyle]="ngxGnsGridService.gridConfig.rowStyleFn ? ngxGnsGridService.gridConfig.rowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.rowNgStyle ? ngxGnsGridService.gridConfig.rowNgStyle : {}"
+        (click)="rowClick.emit({dataItem:rowItem, index:rowItemIndex, event: $event})">
+      <td *ngIf="ngxGnsGridService.selectable" class="selection-column">
+        <input type="checkbox" (click)="$event.stopPropagation(); onSelectionChange()"
+               (change)="$event ? ngxGnsGridService.selection.toggle(rowItem) : null"
+               [checked]="ngxGnsGridService.selection.isSelected(rowItem)">
+      </td>
       <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
         <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
             [ngClass]="column.ngClass"
-            [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}">
+            [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}"
+            (click)="cellClick.emit({column: column, columnIndex: columnIndex, row:rowItem, rowIndex: rowItemIndex, event: $event})">
           <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
                [ngClass]="column.cellNgClass"
                [ngStyle]="column.cellStyleFn ? column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
@@ -59,6 +67,7 @@
       *ngIf="ngxGnsGridService.showFooter"
       class="{{ngxGnsGridService.gridConfig.footerRowClass}} {{ngxGnsGridService.gridConfig.footerRowClassFn && ngxGnsGridService.gridConfig.footerRowClassFn()}}"
       [ngStyle]="ngxGnsGridService.gridConfig.footerRowStyleFn ? ngxGnsGridService.gridConfig.footerRowStyleFn() : ngxGnsGridService.gridConfig.footerRowNgStyle ? ngxGnsGridService.gridConfig.footerRowNgStyle : {}">
+      <th *ngIf="ngxGnsGridService.selectable"></th>
       <th *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
           class="{{ngxGnsGridService.gridConfig.footerCellClass}} {{ngxGnsGridService.gridConfig.footerCellClassFn && ngxGnsGridService.gridConfig.footerCellClassFn(column, columnIndex)}}"
           [ngStyle]="ngxGnsGridService.gridConfig.footerCellStyleFn ? ngxGnsGridService.gridConfig.footerCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.footerCellNgStyle ? ngxGnsGridService.gridConfig.footerCellNgStyle : {}">
@@ -137,6 +146,12 @@
   <tr
     class="{{ngxGnsGridService.gridConfig.headerRowClass}} {{ngxGnsGridService.gridConfig.headerRowClassFn && ngxGnsGridService.gridConfig.headerRowClassFn()}}"
     [ngStyle]="ngxGnsGridService.gridConfig.headerRowStyleFn ? ngxGnsGridService.gridConfig.headerRowStyleFn() : ngxGnsGridService.gridConfig.headerRowNgStyle ? ngxGnsGridService.gridConfig.headerRowNgStyle : {}">
+    <th *ngIf="ngxGnsGridService.selectable" class="selection-column">
+      <input type="checkbox"
+             *ngIf="ngxGnsGridService.selection.isMultipleSelection()"
+             (change)="$event ? masterToggle() : null; onSelectionChange()"
+             [checked]="ngxGnsGridService.selection.hasValue() && isAllSelected()">
+    </th>
     <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
         class="{{ngxGnsGridService.gridConfig.headerCellClass}} {{ngxGnsGridService.gridConfig.headerCellClassFn && ngxGnsGridService.gridConfig.headerCellClassFn(column, columnIndex)}}"
         [ngStyle]="ngxGnsGridService.gridConfig.headerCellStyleFn ? ngxGnsGridService.gridConfig.headerCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.headerCellNgStyle ? ngxGnsGridService.gridConfig.headerCellNgStyle : {}"
@@ -156,6 +171,7 @@
   <tr
     class="{{ngxGnsGridService.gridConfig.headerFilterRowClass}} {{ngxGnsGridService.gridConfig.headerFilterRowClassFn && ngxGnsGridService.gridConfig.headerFilterRowClassFn()}}"
     [ngStyle]="ngxGnsGridService.gridConfig.headerFilterRowStyleFn ? ngxGnsGridService.gridConfig.headerFilterRowStyleFn() : ngxGnsGridService.gridConfig.headerFilterRowNgStyle ? ngxGnsGridService.gridConfig.headerFilterRowNgStyle : {}">
+    <td *ngIf="ngxGnsGridService.selectable"></td>
     <td *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
       <div class="d-flex flex-column"
            *ngIf="(ngxGnsGridService.filterable && column.filterable === undefined) || (ngxGnsGridService.filterable && column.filterable)">

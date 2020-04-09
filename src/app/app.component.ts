@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GridColumnDef, GridConfig, GridState } from '../../projects/gns-grid/src/lib/types';
+import { GridCellClickEvent, GridColumnDef, GridConfig, GridRowClickEvent, GridState } from '../../projects/gns-grid/src/lib/types';
 import { GridPaginationConfig } from '../../projects/gns-grid/src/lib/types/grid-pagination-config';
 
 @Component({
@@ -51,6 +51,7 @@ export class AppComponent {
     }
   ];
   dataSource: any[] = [];
+  selectedKeys: any[] = [1, 3];
   gridConfig: GridConfig = {
     footerClass: 'bg-primary',
     footerCellClassFn: column => {
@@ -89,12 +90,32 @@ export class AppComponent {
     this.state = new GridState();
   }
 
-  onCloseClick(dataItem): void {
-    alert('hello, ' + dataItem.first);
+  onCloseClick(dataItem, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
     console.log(dataItem);
+    alert('hello, ' + dataItem.first);
   }
 
   onStateChange(event) {
     console.log(event);
+  }
+
+  onRowClick(event: GridRowClickEvent): void {
+    console.log(event);
+  }
+
+  onCellClick(event: GridCellClickEvent): void {
+    // console.log(event);
+  }
+
+  onSelectionChange(event) {
+    // console.log(event);
+    // this.selectedKeys = event;
+  }
+
+  onSelectedKeysChange(event) {
+    this.selectedKeys = event;
+    console.log(this.selectedKeys);
   }
 }

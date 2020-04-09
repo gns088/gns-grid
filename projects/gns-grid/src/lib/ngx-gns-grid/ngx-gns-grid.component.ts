@@ -13,10 +13,12 @@ import {
 import { NgxGnsGridService } from '../services/ngx-gns-grid.service';
 import { NgxGnsGridStateService } from '../services/ngx-gns-grid-state.service';
 import {
+  GridCellClickEvent,
   GridColumnDef,
   GridConfig,
   GridPagination,
   GridPaginationConfig,
+  GridRowClickEvent,
   GridSort,
   GridState,
   RowSelectionConfig,
@@ -25,6 +27,7 @@ import {
 import { Subscription } from 'rxjs';
 import { GridUtils } from '../utils';
 import { NgxGnsGridColumnComponent } from '../template-components/ngx-gns-grid-column/ngx-gns-grid-column.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-gns-grid',
@@ -36,7 +39,7 @@ import { NgxGnsGridColumnComponent } from '../template-components/ngx-gns-grid-c
 export class NgxGnsGridComponent implements OnInit, OnDestroy {
   /**
    * store state for active grid, store all information about sorting, filtering and pagination
-   * */
+   */
   @Input('state')
   get state(): GridState {
     return this.ngxGnsGridStateService.state;
@@ -50,7 +53,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   /**
    * Tracking function that will be used to check the differences in data changes. Used similarly
    * to `ngFor` `trackBy` function.
-   * */
+   */
   @Input()
   set trackBy(fn: TrackByFunction<any>) {
     this.ngxGnsGridService.trackByFn = fn;
@@ -58,18 +61,11 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * data list
-   * */
+   * @param: value: Array<any>
+   */
   @Input()
   set dataSource(value: Array<any>) {
     this.ngxGnsGridService.dataSource = value;
-  }
-
-  /**
-   * used by mat-table to show identify which column we need to show.
-   * */
-  @Input('displayedColumns')
-  set displayedColumns(value: string[]) {
-    this.ngxGnsGridService.displayedColumns = value;
   }
 
   /**
@@ -91,7 +87,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * Enable selection in mat-grid
-   * */
+   */
   @Input('selectable')
   set selectable(value: boolean) {
     this.ngxGnsGridService.selectable = value;
@@ -107,11 +103,12 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     this.ngxGnsGridService.selectedKeys = value;
   }
 
-  @Output('selectedKeysChange') selectedKeysChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output()
+  selectedKeysChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
   /**
    * Enable pagination in mat-grid
-   * */
+   */
   @Input('pageable')
   set pageable(value: boolean) {
     this.ngxGnsGridService.pageable = value;
@@ -119,7 +116,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * Enable footer row
-   * */
+   */
   @Input('showFooter')
   set showFooter(value: boolean) {
     this.ngxGnsGridService.showFooter = value;
@@ -135,7 +132,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * enable sorting in mat-grid
-   * */
+   */
   @Input('sortable')
   set sortable(value: boolean) {
     this.ngxGnsGridService.sortable = value;
@@ -143,7 +140,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * enable filtration in mat-grid
-   * */
+   */
   @Input('filterable')
   set filterable(value: boolean) {
     this.ngxGnsGridService.filterable = value;
@@ -152,7 +149,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   /**
    * filtering, sorting and pagination is client side or server side.
    * if it is client side then all process will be handle by mat-grid locally.
-   * */
+   */
   @Input('isClientSide')
   set isClientSide(value: boolean) {
     this.ngxGnsGridService.isClientSide = value;
@@ -160,15 +157,15 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * mat-grid config for header footer and grid(table) classes
-   * */
+   */
   @Input('gridConfig')
   set gridConfig(value: GridConfig) {
     this.ngxGnsGridService.gridConfig = value;
   }
 
   /**
-   *pagination config for mat-paginator configurations
-   * */
+   * pagination config for mat-paginator configurations
+   */
   @Input('paginationConfig')
   set paginationConfig(value: GridPaginationConfig) {
     this.ngxGnsGridService.paginationConfig = value;
@@ -222,11 +219,20 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   @ContentChildren(NgxGnsGridColumnComponent, {descendants: true}) columnTemplates: QueryList<NgxGnsGridColumnComponent>;
 
-  @Output('stateChange') stateChange: EventEmitter<GridState> = new EventEmitter<GridState>();
-  @Output('filterChange') filterChange: EventEmitter<Map<string, any>> = new EventEmitter<Map<string, any>>();
-  @Output('sortChange') sortChange: EventEmitter<Map<string, string>> = new EventEmitter<Map<string, string>>();
-  @Output('pageChange') pageChange: EventEmitter<GridPagination> = new EventEmitter<GridPagination>();
-  @Output('selectionChange') selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output()
+  stateChange: EventEmitter<GridState> = new EventEmitter<GridState>();
+  @Output()
+  filterChange: EventEmitter<Map<string, any>> = new EventEmitter<Map<string, any>>();
+  @Output()
+  sortChange: EventEmitter<Map<string, string>> = new EventEmitter<Map<string, string>>();
+  @Output()
+  pageChange: EventEmitter<GridPagination> = new EventEmitter<GridPagination>();
+  @Output()
+  selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output()
+  rowClick: EventEmitter<GridRowClickEvent> = new EventEmitter<GridRowClickEvent>();
+  @Output()
+  cellClick: EventEmitter<GridCellClickEvent> = new EventEmitter<GridCellClickEvent>();
 
   constructor(public ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
   }
@@ -245,9 +251,10 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
       this.state.pageSize = value.pageSize;
       this.state.total = value.total;
       this.ngxGnsGridStateService.pagination = pagination;
-      this.preserveSelection();
       if (this.ngxGnsGridService.isClientSide) {
         this.processData();
+      } else {
+        this.preserveSelection();
       }
     }));
 
@@ -268,7 +275,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     }));
 
     this.paginationSubscription = this.ngxGnsGridService.paginationObservable$.subscribe((value => {
-      this.selection = new SelectionModel<Element>(this.ngxGnsGridService.selectableConfig.multiple, []);
+      this.ngxGnsGridService.selection = new SelectionModel<Element>(this.ngxGnsGridService.selectableConfig.multiple, []);
       this.state.pageIndex = value.pageIndex;
       this.state.pageSize = value.pageSize;
       this.state.total = value.total;
@@ -277,7 +284,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
       this.stateChange.emit(this.state);
     }));
 
-    this.preserveSelection();
+    // this.preserveSelection();
   }
 
   ngOnDestroy(): void {
@@ -299,6 +306,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     const result = GridUtils.process([...this.ngxGnsGridService.dataSource], this.state, this.ngxGnsGridService.columnDef);
     this.ngxGnsGridService.localDataSource = result.data;
     this.state.total = result.state.total;
+    this.preserveSelection();
   }
 
   onSortChange(event: GridSort) {
@@ -339,6 +347,26 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     this.onSelectionChange();
   }
 
+  /*onRowCheckboxClick(rowItem): void {
+    setTimeout(() => {
+      const findIndex = this.ngxGnsGridService.selectedValue.findIndex(object => {
+        const a = _.cloneDeep(rowItem);
+        const b = _.cloneDeep(object);
+        delete a.checked;
+        delete b.checked;
+        return _.isEqual(a, b);
+      });
+      if (findObject && !this.ngxGnsGridService.selection.isSelected(findObject)) {
+        this.ngxGnsGridService.selection.select(findObject);
+      }
+      if (findIndex > -1) {
+        this.ngxGnsGridService.selectedValue.splice(findIndex, 1);
+      }
+      console.log(JSON.stringify(rowItem));
+      this.onSelectionChange();
+    });
+  }*/
+
   onSelectionChange() {
     setTimeout(() => {
       if (this.ngxGnsGridService.selectableConfig.columnId) {
@@ -351,7 +379,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     });
   }
 
-  private preserveSelection = () => {
+  private preserveSelection() {
     if (this.ngxGnsGridService.selectableConfig.columnId) {
       this.ngxGnsGridService.localDataSource.forEach((object) => {
         if (this.ngxGnsGridService.selectedKeys.indexOf(object[this.ngxGnsGridService.selectableConfig.columnId]) > -1) {
@@ -360,12 +388,17 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
       });
     } else {
       this.ngxGnsGridService.selectedKeys.forEach((object) => {
-        const findObject = this.ngxGnsGridService.localDataSource.find(o => JSON.stringify(o) === JSON.stringify(object));
+        const findObject = this.ngxGnsGridService.localDataSource.find(o => {
+          const a = _.cloneDeep(object);
+          const b = _.cloneDeep(o);
+          return _.isEqual(a, b);
+        });
         if (findObject && !this.ngxGnsGridService.selection.isSelected(findObject)) {
           this.ngxGnsGridService.selection.select(findObject);
         }
       });
     }
-  };
+    console.log(this.ngxGnsGridService.selection);
+  }
 
 }

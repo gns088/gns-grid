@@ -9,3 +9,4 @@ export * from './grid-column-def';
 export * from './grid-config';
 export * from './row-selection-config';
 export * from './grid-sort';
+export * from './grid-event-emitter';

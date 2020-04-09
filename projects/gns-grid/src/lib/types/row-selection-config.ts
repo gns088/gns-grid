@@ -1,4 +1,4 @@
 export class RowSelectionConfig {
-  multiple?: boolean = true;
+  multiple?: boolean = false;
   columnId?: string;
 }
