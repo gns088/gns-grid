@@ -116,7 +116,7 @@
     </select>
     <ngb-pagination [size]="ngxGnsGridService.paginationConfig.size"
                     [disabled]="ngxGnsGridService.paginationConfig.disabled"
-                    [collectionSize]="state.total"
+                    [collectionSize]="ngxGnsGridService.gridDataSource.totalRecords"
                     [(page)]="state.pageIndex"
                     (pageChange)="onPageChange($event)"
                     [pageSize]="state.pageSize"

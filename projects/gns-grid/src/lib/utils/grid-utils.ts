@@ -26,6 +26,7 @@ interface PagerDetails {
 interface MatGridProcessResult {
   data: Array<any>;
   state: GridState;
+  totalRecords: number;
 }
 
 export class GridUtils {
@@ -60,10 +61,10 @@ export class GridUtils {
     data = this.sortData(data, state.sort);
     const pager = this.getPager(data.length, state.pageIndex, state.pageSize);
     data = this.pagingData(data, pager);
-    state.total = pager.total;
     return {
       data,
-      state
+      state,
+      totalRecords: pager.total
     } as MatGridProcessResult;
   }
 

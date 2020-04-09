@@ -16,6 +16,7 @@ import {
   GridCellClickEvent,
   GridColumnDef,
   GridConfig,
+  GridDataSource,
   GridPagination,
   GridPaginationConfig,
   GridRowClickEvent,
@@ -47,7 +48,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   set state(value: GridState) {
     this.ngxGnsGridStateService.state = value;
-    // this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
+    this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
   }
 
   /**
@@ -64,8 +65,8 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
    * @param: value: Array<any>
    */
   @Input()
-  set dataSource(value: Array<any>) {
-    this.ngxGnsGridService.dataSource = value;
+  set gridData(value: GridDataSource) {
+    this.ngxGnsGridService.gridDataSource = value;
   }
 
   /**
@@ -239,7 +240,6 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.stateSubscription = this.ngxGnsGridService.stateObservable$.subscribe((value => {
-      console.log('state change');
       this.ngxGnsGridStateService.filter = value.filter;
       this.state.filter = value.filter;
       this.ngxGnsGridStateService.sort = value.sort;
@@ -247,10 +247,8 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
       const pagination: GridPagination = new GridPagination();
       pagination.pageIndex = value.pageIndex;
       pagination.pageSize = value.pageSize;
-      pagination.total = value.total;
       this.state.pageIndex = value.pageIndex;
       this.state.pageSize = value.pageSize;
-      this.state.total = value.total;
       this.ngxGnsGridStateService.pagination = pagination;
       if (this.ngxGnsGridService.isClientSide) {
         this.processData();
@@ -279,7 +277,6 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
       this.ngxGnsGridService.selection = new SelectionModel<Element>(this.ngxGnsGridService.selectableConfig.multiple, []);
       this.state.pageIndex = value.pageIndex;
       this.state.pageSize = value.pageSize;
-      this.state.total = value.total;
       this.pageChange.emit(value);
       this.ngxGnsGridService.stateObservable$.next(this.state);
       this.stateChange.emit(this.state);
@@ -304,9 +301,9 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   }
 
   private processData() {
-    const result = GridUtils.process([...this.ngxGnsGridService.dataSource], this.state, this.ngxGnsGridService.columnDef);
+    const result = GridUtils.process([...this.ngxGnsGridService.gridDataSource.data], this.state, this.ngxGnsGridService.columnDef);
     this.ngxGnsGridService.localDataSource = result.data;
-    this.state.total = result.state.total;
+    this.ngxGnsGridService.gridDataSource.totalRecords = result.totalRecords;
     this.preserveSelection();
   }
 
@@ -327,7 +324,6 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     const pagination = new GridPagination();
     pagination.pageIndex = event;
     pagination.pageSize = this.state.pageSize;
-    pagination.total = this.state.total;
     this.ngxGnsGridService.paginationObservable$.next(pagination);
   }
 

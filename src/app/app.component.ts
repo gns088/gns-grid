@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
-import { GridCellClickEvent, GridColumnDef, GridConfig, GridRowClickEvent, GridState } from '../../projects/gns-grid/src/lib/types';
+import {
+  GridCellClickEvent,
+  GridColumnDef,
+  GridConfig,
+  GridDataSource,
+  GridRowClickEvent,
+  GridState
+} from '../../projects/gns-grid/src/lib/types';
 import { GridPaginationConfig } from '../../projects/gns-grid/src/lib/types/grid-pagination-config';
 
 @Component({
@@ -50,7 +57,7 @@ export class AppComponent {
       width: 110
     }
   ];
-  dataSource: any[] = [];
+  dataSource: GridDataSource;
   selectedKeys: any[] = [1, 3];
   gridConfig: GridConfig = {
     footerClass: 'bg-primary',
@@ -71,22 +78,27 @@ export class AppComponent {
     position: 'bottom',
     align: 'end'
   };
-  state: GridState = new GridState();
+  state: GridState = {
+    pageIndex: 1
+  };
 
   constructor() {
-    this.state.pageIndex = 2;
-    this.state.total = 20;
-    this.state.pageSize = 10;
+    // this.state.pageIndex = 2;
+    // this.state.pageSize = 10;
     const length = 20;
+    const data = [];
     for (let i = 1; i <= length; i++) {
-      this.dataSource.push({
+      data.push({
         id: i,
         first: 'Mark' + i,
         last: 'Otto',
         handle: 'mdo',
       });
     }
-    this.dataSource = [...this.dataSource];
+    this.dataSource = {
+      data,
+      totalRecords: length
+    };
   }
 
   onReset(): void {

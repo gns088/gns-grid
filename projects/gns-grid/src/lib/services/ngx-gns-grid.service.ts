@@ -5,6 +5,7 @@ import {
   coerceBooleanProperty,
   GridColumnDef,
   GridConfig,
+  GridDataSource,
   GridPagination,
   GridPaginationConfig,
   GridState,
@@ -20,7 +21,7 @@ export class NgxGnsGridService {
   private _sortObservable$: ReplaySubject<Map<string, string>> = new ReplaySubject();
   private _paginationObservable$: ReplaySubject<GridPagination> = new ReplaySubject();
   private _trackByFn: TrackByFunction<any>;
-  private _dataSource: Array<any> = [];
+  private _gridDataSource: GridDataSource = new GridDataSource();
   private _localDataSource: Array<any> = [];
   private _columnDef: GridColumnDef[];
   private _showFooter: boolean = false;
@@ -86,14 +87,16 @@ export class NgxGnsGridService {
     this.trackByFn = fn;
   }
 
-  get dataSource(): Array<any> {
-    return this._dataSource;
+  get gridDataSource(): GridDataSource {
+    return this._gridDataSource;
   }
 
-  set dataSource(value: Array<any>) {
-    if (this.dataSource !== value) {
-      this._dataSource = value;
-      this._localDataSource = value;
+  set gridDataSource(value: GridDataSource) {
+    if (value && value.data) {
+      if (this.gridDataSource !== value) {
+        this._gridDataSource = value;
+        this.localDataSource = value.data;
+      }
     }
   }
 
@@ -206,7 +209,7 @@ export class NgxGnsGridService {
     this.selection = new SelectionModel<any>(
       this.selectableConfig.multiple,
       []
-    )
+    );
   }
 
   get selectableConfig(): RowSelectionConfig {
@@ -220,7 +223,7 @@ export class NgxGnsGridService {
     this.selection = new SelectionModel<any>(
       this.selectableConfig.multiple,
       []
-    )
+    );
   }
 
   get selectedKeys(): any[] {
