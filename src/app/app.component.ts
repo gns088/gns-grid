@@ -78,9 +78,7 @@ export class AppComponent {
     position: 'bottom',
     align: 'end'
   };
-  state: GridState = {
-    pageIndex: 1
-  };
+  state: GridState = new GridState();
 
   constructor() {
     // this.state.pageIndex = 2;
