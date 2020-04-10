@@ -1,24 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgxGnsGridService } from '../../services/ngx-gns-grid.service';
-import { GridColumnFilterDef } from '../../types';
+import { GridColumnFilterDef, GridStateFilter } from '../../types';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'ngx-mat-grid-string-filter',
   templateUrl: './mat-grid-string-filter.component.html',
   styleUrls: ['./mat-grid-string-filter.component.scss']
 })
-export class MatGridStringFilterComponent implements OnInit {
+export class MatGridStringFilterComponent implements OnInit, OnDestroy {
 
   private _filterDetails: GridColumnFilterDef = new GridColumnFilterDef();
   private _id: string;
-  private _filter: Map<string, any>;
+  private _filter: GridStateFilter[] = [];
 
   @Input()
-  get filter(): Map<string, any> {
+  get filter(): GridStateFilter[] {
     return this._filter;
   }
 
-  set filter(value: Map<string, any>) {
+  set filter(value: GridStateFilter[]) {
     this._filter = value;
   }
 
@@ -41,13 +42,22 @@ export class MatGridStringFilterComponent implements OnInit {
     this._filterDetails = value;
   }
 
-  constructor(public ngxMatGridService: NgxGnsGridService) {
+  private subscription: Subscription;
+  public value: any;
+
+  constructor(public ngxGnsGridService: NgxGnsGridService) {
   }
 
   ngOnInit() {
+    this.subscription = this.ngxGnsGridService.stateObservable$.subscribe((state) => {
+      if (!this.ngxGnsGridService.getGridFilterById(this.filter, this.id)) {
+        this.value = null;
+      }
+    });
   }
 
   onChange() {
-    this.ngxMatGridService.filterObservable$.next(this.filter);
+    this.filter = this.ngxGnsGridService.setGridFilterById(this.filter, this.id, this.value);
+    this.ngxGnsGridService.filterObservable$.next(this.filter);
   }
 }

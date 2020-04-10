@@ -8,7 +8,7 @@
          class="{{filterDetails.prepend}}" aria-hidden="true"></i>
     </span>
   </div>
-  <input type="text" [name]="'string-'+id+'-filter'" [(ngModel)]="filter[id]" (change)="onChange()"
+  <input type="text" [name]="'string-'+id+'-filter'" [(ngModel)]="value" (change)="onChange()"
          [placeholder]="filterDetails.placeholder? filterDetails.placeholder : ''">
   <div class="input-group-append" *ngIf="filterDetails && filterDetails.append">
     <span class="input-group-text" *ngIf="!filterDetails.icon">

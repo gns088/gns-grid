@@ -9,6 +9,8 @@ import {
   GridPagination,
   GridPaginationConfig,
   GridState,
+  GridStateFilter,
+  GridStateSort,
   RowSelectionConfig,
   SelectionModel
 } from '../types';
@@ -17,8 +19,8 @@ import * as _ from 'lodash';
 @Injectable()
 export class NgxGnsGridService {
   private _stateObservable$: ReplaySubject<GridState> = new ReplaySubject();
-  private _filterObservable$: ReplaySubject<Map<string, any>> = new ReplaySubject();
-  private _sortObservable$: ReplaySubject<Map<string, string>> = new ReplaySubject();
+  private _filterObservable$: ReplaySubject<GridStateFilter[]> = new ReplaySubject();
+  private _sortObservable$: ReplaySubject<GridStateSort[]> = new ReplaySubject();
   private _paginationObservable$: ReplaySubject<GridPagination> = new ReplaySubject();
   private _trackByFn: TrackByFunction<any>;
   private _gridDataSource: GridDataSource = new GridDataSource();
@@ -52,19 +54,19 @@ export class NgxGnsGridService {
     this._stateObservable$ = value;
   }
 
-  get filterObservable$(): ReplaySubject<Map<string, any>> {
+  get filterObservable$(): ReplaySubject<GridStateFilter[]> {
     return this._filterObservable$;
   }
 
-  set filterObservable$(value: ReplaySubject<Map<string, any>>) {
+  set filterObservable$(value: ReplaySubject<GridStateFilter[]>) {
     this._filterObservable$ = value;
   }
 
-  get sortObservable$(): ReplaySubject<Map<string, string>> {
+  get sortObservable$(): ReplaySubject<GridStateSort[]> {
     return this._sortObservable$;
   }
 
-  set sortObservable$(value: ReplaySubject<Map<string, string>>) {
+  set sortObservable$(value: ReplaySubject<GridStateSort[]>) {
     this._sortObservable$ = value;
   }
 
@@ -283,5 +285,44 @@ export class NgxGnsGridService {
 
   set tableHeight(value: string) {
     this._tableHeight = value;
+  }
+
+  getGridFilterById(filter: GridStateFilter[], id: string): GridStateFilter {
+    return filter.find(object => object.field === id);
+  }
+
+  setGridFilterById(filter: GridStateFilter[], id: string, value: any): GridStateFilter[] {
+    const filterObject = this.getGridFilterById(filter, id);
+    if (filterObject) {
+      filterObject.value = value;
+    } else {
+      filter.push({
+        field: id,
+        value,
+        index: filter.length
+      });
+    }
+    return filter.filter(o => o.value);
+  }
+
+  getGridSortById(sort: GridStateSort[], id: string): GridStateSort {
+    return sort.find(object => object.field === id);
+  }
+
+  setGridSortById(sort: GridStateSort[], id: string, direction: any): GridStateSort[] {
+    const filterObject = this.getGridSortById(sort, id);
+    if (filterObject) {
+      filterObject.direction = direction;
+    } else {
+      sort.push({
+        field: id,
+        direction,
+        index: sort.length
+      });
+    }
+    return sort.filter(o => o.direction).map((o, index) => {
+      o.index = index;
+      return o;
+    });
   }
 }

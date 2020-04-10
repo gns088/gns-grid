@@ -20,8 +20,9 @@ import {
   GridPagination,
   GridPaginationConfig,
   GridRowClickEvent,
-  GridSort,
   GridState,
+  GridStateFilter,
+  GridStateSort,
   RowSelectionConfig,
   SelectionModel
 } from '../types';
@@ -38,6 +39,10 @@ import * as _ from 'lodash';
   providers: [NgxGnsGridService, NgxGnsGridStateService]
 })
 export class NgxGnsGridComponent implements OnInit, OnDestroy {
+
+  @Input('noRecordMessage')
+  noRecordMessage: string = 'No Record Found';
+
   /**
    * store state for active grid, store all information about sorting, filtering and pagination
    */
@@ -48,7 +53,9 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   set state(value: GridState) {
     this.ngxGnsGridStateService.state = value;
-    this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
+    setTimeout(() => {
+      this.ngxGnsGridService.stateObservable$.next(this.ngxGnsGridStateService.state);
+    });
   }
 
   /**
@@ -125,7 +132,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
 
   /**
    * Enable pagination in mat-grid
-   * */
+   */
   @Input('selection')
   set selection(value: SelectionModel<any>) {
     this.ngxGnsGridService.selection = value;
@@ -223,9 +230,9 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   @Output()
   stateChange: EventEmitter<GridState> = new EventEmitter<GridState>();
   @Output()
-  filterChange: EventEmitter<Map<string, any>> = new EventEmitter<Map<string, any>>();
+  filterChange: EventEmitter<GridStateFilter[]> = new EventEmitter<GridStateFilter[]>();
   @Output()
-  sortChange: EventEmitter<Map<string, string>> = new EventEmitter<Map<string, string>>();
+  sortChange: EventEmitter<GridStateSort[]> = new EventEmitter<GridStateSort[]>();
   @Output()
   pageChange: EventEmitter<GridPagination> = new EventEmitter<GridPagination>();
   @Output()
@@ -307,14 +314,6 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     this.preserveSelection();
   }
 
-  onSortChange(event: GridSort) {
-    this.state.sort = new Map<string, string>();
-    if (event.direction) {
-      this.state.sort[event.field] = event.direction;
-    }
-    this.ngxGnsGridService.sortObservable$.next(this.state.sort);
-  }
-
   stopEvent(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -344,30 +343,12 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
     this.onSelectionChange();
   }
 
-  /*onRowCheckboxClick(rowItem): void {
-    setTimeout(() => {
-      const findIndex = this.ngxGnsGridService.selectedValue.findIndex(object => {
-        const a = _.cloneDeep(rowItem);
-        const b = _.cloneDeep(object);
-        delete a.checked;
-        delete b.checked;
-        return _.isEqual(a, b);
-      });
-      if (findObject && !this.ngxGnsGridService.selection.isSelected(findObject)) {
-        this.ngxGnsGridService.selection.select(findObject);
-      }
-      if (findIndex > -1) {
-        this.ngxGnsGridService.selectedValue.splice(findIndex, 1);
-      }
-      console.log(JSON.stringify(rowItem));
-      this.onSelectionChange();
-    });
-  }*/
-
   onSelectionChange() {
     setTimeout(() => {
       if (this.ngxGnsGridService.selectableConfig.columnId) {
-        this.ngxGnsGridService.selectedKeys = this.ngxGnsGridService.selection.selected.map(o => o[this.ngxGnsGridService.selectableConfig.columnId]);
+        this.ngxGnsGridService.selectedKeys = this.ngxGnsGridService.selection
+          .selected
+          .map(o => o[this.ngxGnsGridService.selectableConfig.columnId]);
       } else {
         this.ngxGnsGridService.selectedKeys = this.ngxGnsGridService.selection.selected;
       }

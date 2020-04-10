@@ -18,7 +18,7 @@
              [clearable]="true"
              (change)="onChange()"
              appendTo="body"
-             [(ngModel)]="filter[id]">
+             [(ngModel)]="value">
   </ng-select>
   <ng-select *ngIf="filterDetails.type === 'singleSelect'"
              [items]="filterDetails.listValue"
@@ -29,7 +29,7 @@
              [clearable]="true"
              (change)="onChange()"
              appendTo="body"
-             [(ngModel)]="filter[id]">
+             [(ngModel)]="value">
   </ng-select>
   <div class="input-group-append" *ngIf="filterDetails && filterDetails.append">
     <span class="input-group-text" *ngIf="!filterDetails.icon">

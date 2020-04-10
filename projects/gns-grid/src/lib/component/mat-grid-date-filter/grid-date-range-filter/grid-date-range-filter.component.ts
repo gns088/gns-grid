@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { GridColumnFilterDef } from '../../../types';
+import { GridColumnFilterDef, GridStateFilter } from '../../../types';
 import { NgxGnsGridService } from '../../../services/ngx-gns-grid.service';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ export class GridDateRangeFilterComponent implements OnInit, OnDestroy {
 
   private _filterDetails: GridColumnFilterDef = new GridColumnFilterDef();
   private _id: string;
-  private _filter: Map<string, any> = new Map<string, any>();
+  private _filter: GridStateFilter[] = [];
 
   @Input('type') type: 'date' | 'dateTime' | 'time' = 'date';
   @Input('range') range: boolean = true;
@@ -24,11 +24,11 @@ export class GridDateRangeFilterComponent implements OnInit, OnDestroy {
   toDate: NgbDate | null;
 
   @Input()
-  get filter(): Map<string, any> {
+  get filter(): GridStateFilter[] {
     return this._filter;
   }
 
-  set filter(value: Map<string, any>) {
+  set filter(value: GridStateFilter[]) {
     this._filter = value;
   }
 
@@ -63,7 +63,7 @@ export class GridDateRangeFilterComponent implements OnInit, OnDestroy {
       this.filterDetails.append = 'fa fa-calendar';
     }
     this.subscription = this.ngxGnsGridService.stateObservable$.subscribe((state) => {
-      if (!state.filter[this.id]) {
+      if (!this.ngxGnsGridService.getGridFilterById(this.filter, this.id)) {
         this.fromDate = null;
         this.toDate = null;
       }
@@ -107,10 +107,11 @@ export class GridDateRangeFilterComponent implements OnInit, OnDestroy {
   onChange() {
     setTimeout(() => {
       if (this.fromDate && this.toDate) {
-        this.filter[this.id] = {
+        const value = {
           startDate: new Date(`${this.fromDate.month}/${this.fromDate.day}/${this.fromDate.year}`).toISOString(),
           endDate: new Date(`${this.toDate.month}/${this.toDate.day}/${this.toDate.year}`).toISOString()
         };
+        this.filter = this.ngxGnsGridService.setGridFilterById(this.filter, this.id, value);
         this.ngxGnsGridService.filterObservable$.next(this.filter);
       }
     });

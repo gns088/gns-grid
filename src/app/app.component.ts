@@ -85,14 +85,14 @@ export class AppComponent {
     // this.state.pageSize = 10;
     const length = 20;
     const data = [];
-    for (let i = 1; i <= length; i++) {
+    /*for (let i = 1; i <= length; i++) {
       data.push({
         id: i,
         first: 'Mark' + i,
         last: 'Otto',
         handle: 'mdo',
       });
-    }
+    }*/
     this.dataSource = {
       data,
       totalRecords: length

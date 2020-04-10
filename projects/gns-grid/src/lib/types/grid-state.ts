@@ -1,6 +1,16 @@
+import { GridStateSort } from './grid-state-sort';
+
 export class GridState {
-  public filter?: Map<string, any> = new Map<string, any>();
+  public filter?: GridStateFilter[] = [];
   public pageIndex: number = 1;
   public pageSize?: number = 10;
-  public sort?: Map<string, string> = new Map<string, string>();
+  public sort?: GridStateSort[] = [];
 }
+
+export class GridStateFilter {
+  field: string;
+  value: any;
+  index: number;
+}
+
+

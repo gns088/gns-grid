@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { GridPagination, GridState } from '../types';
-import * as _ from 'lodash';
+import { GridPagination, GridState, GridStateFilter, GridStateSort } from '../types';
 
 @Injectable()
 export class NgxGnsGridStateService {
   private _state: GridState = new GridState();
-  private _filter: Map<string, any> = new Map<string, any>();
-  private _sort: Map<string, string> = new Map<string, string>();
+  private _filter: GridStateFilter[] = [];
+  private _sort: GridStateSort[] = [];
   private _pagination: GridPagination = new GridPagination();
 
   get state(): GridState {
@@ -14,23 +13,28 @@ export class NgxGnsGridStateService {
   }
 
   set state(value: GridState) {
-    value = _.merge(this.state, value);
+    if (!value.filter) {
+      value.filter = [];
+    }
+    if (!value.sort) {
+      value.sort = [];
+    }
     this._state = value;
   }
 
-  get filter(): Map<string, any> {
+  get filter(): GridStateFilter[] {
     return this._filter;
   }
 
-  set filter(value: Map<string, any>) {
+  set filter(value: GridStateFilter[]) {
     this._filter = value;
   }
 
-  get sort(): Map<string, string> {
+  get sort(): GridStateSort[] {
     return this._sort;
   }
 
-  set sort(value: Map<string, string>) {
+  set sort(value: GridStateSort[]) {
     this._sort = value;
   }
 

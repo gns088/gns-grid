@@ -27,38 +27,41 @@
     <tbody
       class="{{ngxGnsGridService.gridConfig.bodyClass}} {{ngxGnsGridService.gridConfig.bodyClassFn && ngxGnsGridService.gridConfig.bodyClassFn()}}"
       [ngStyle]="ngxGnsGridService.gridConfig.bodyStyleFn ? ngxGnsGridService.gridConfig.bodyStyleFn() : ngxGnsGridService.gridConfig.bodyNgStyle ? ngxGnsGridService.gridConfig.bodyNgStyle : {}">
-    <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
-        class="{{ngxGnsGridService.gridConfig.rowClass}} {{ngxGnsGridService.gridConfig.rowClassFn && ngxGnsGridService.gridConfig.rowClassFn(rowItem, rowItemIndex)}}
+    <ng-container
+      *ngIf="ngxGnsGridService.localDataSource && ngxGnsGridService.localDataSource.length; else noResultsFoundTemplate">
+      <tr *ngFor="let rowItem of ngxGnsGridService.localDataSource; let rowItemIndex = index;"
+          class="{{ngxGnsGridService.gridConfig.rowClass}} {{ngxGnsGridService.gridConfig.rowClassFn && ngxGnsGridService.gridConfig.rowClassFn(rowItem, rowItemIndex)}}
                 {{ngxGnsGridService.selection.isSelected(rowItem) ? ngxGnsGridService.gridConfig.activeRowClass : ''}}"
-        [ngStyle]="ngxGnsGridService.gridConfig.rowStyleFn ? ngxGnsGridService.gridConfig.rowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.rowNgStyle ? ngxGnsGridService.gridConfig.rowNgStyle : {}"
-        (click)="rowClick.emit({dataItem:rowItem, index:rowItemIndex, event: $event})">
-      <td *ngIf="ngxGnsGridService.selectable" class="selection-column">
-        <input type="checkbox" (click)="$event.stopPropagation(); onSelectionChange()"
-               (change)="$event ? ngxGnsGridService.selection.toggle(rowItem) : null"
-               [checked]="ngxGnsGridService.selection.isSelected(rowItem)">
-      </td>
-      <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
-        <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
-            [ngClass]="column.ngClass"
-            [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}"
-            (click)="cellClick.emit({column: column, columnIndex: columnIndex, row:rowItem, rowIndex: rowItemIndex, event: $event})">
-          <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
-               [ngClass]="column.cellNgClass"
-               [ngStyle]="column.cellStyleFn ? column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
-            <label class="grid-column-cell-text" *ngIf="!(column | findColumnTemplate:columnTemplates:'cell')">
-              {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
-            </label>
-            <label class="grid-column-cell-text" *ngIf="(column | findColumnTemplate:columnTemplates:'cell')">
-              <ng-container *ngTemplateOutlet="(column | findColumnTemplate:columnTemplates:'cell'); context:{
+          [ngStyle]="ngxGnsGridService.gridConfig.rowStyleFn ? ngxGnsGridService.gridConfig.rowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.rowNgStyle ? ngxGnsGridService.gridConfig.rowNgStyle : {}"
+          (click)="rowClick.emit({dataItem:rowItem, index:rowItemIndex, event: $event})">
+        <td *ngIf="ngxGnsGridService.selectable" class="selection-column">
+          <input type="checkbox" (click)="$event.stopPropagation(); onSelectionChange()"
+                 (change)="$event ? ngxGnsGridService.selection.toggle(rowItem) : null"
+                 [checked]="ngxGnsGridService.selection.isSelected(rowItem)">
+        </td>
+        <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
+          <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
+              [ngClass]="column.ngClass"
+              [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}"
+              (click)="cellClick.emit({column: column, columnIndex: columnIndex, row:rowItem, rowIndex: rowItemIndex, event: $event})">
+            <div class="{{column.cellClass}} {{column.cellClassFn && column.cellClassFn(rowItem, rowItemIndex)}}"
+                 [ngClass]="column.cellNgClass"
+                 [ngStyle]="column.cellStyleFn ? column.cellStyleFn(rowItem, rowItemIndex) : column.cellNgStyle ? column.cellNgStyle : {}">
+              <label class="grid-column-cell-text" *ngIf="!(column | findColumnTemplate:columnTemplates:'cell')">
+                {{column.valueFn ? column.valueFn(rowItem, rowItemIndex) : (rowItem | reduceValue:column.id)}}
+              </label>
+              <label class="grid-column-cell-text" *ngIf="(column | findColumnTemplate:columnTemplates:'cell')">
+                <ng-container *ngTemplateOutlet="(column | findColumnTemplate:columnTemplates:'cell'); context:{
                   $implicit:rowItem,
                   column: column,
                   index:rowItemIndex
               }"></ng-container>
-            </label>
-          </div>
-        </td>
-      </ng-container>
-    </tr>
+              </label>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-container>
     </tbody>
     <tfoot
       class="{{ngxGnsGridService.gridConfig.footerClass}} {{ngxGnsGridService.gridConfig.footerClassFn && ngxGnsGridService.gridConfig.footerClassFn()}}"
@@ -160,8 +163,7 @@
         sortable
         [state]="state"
         [sortable]="column.id"
-        [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)"
-        (sort)="onSortChange($event)">
+        [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)">
       {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
     </th>
   </tr>
@@ -194,5 +196,14 @@
         </div>
       </div>
     </td>
+  </tr>
+</ng-template>
+
+
+<ng-template #noResultsFoundTemplate>
+  <tr class="no-record-row">
+    <th [attr.colspan]="ngxGnsGridService.columnDef.length + 1">
+      {{noRecordMessage}}
+    </th>
   </tr>
 </ng-template>
