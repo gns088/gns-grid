@@ -12,6 +12,7 @@
                   isClientSide="true"
                   selectable
                   [state]="state"
+                  [sortable]="{multiple:false}"
                   (stateChange)="onStateChange($event)"
                   [paginationConfig]="paginationConfig"
                   showFooter

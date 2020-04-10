@@ -24,7 +24,8 @@ import {
   GridStateFilter,
   GridStateSort,
   RowSelectionConfig,
-  SelectionModel
+  SelectionModel,
+  SortableConfig
 } from '../types';
 import { Subscription } from 'rxjs';
 import { GridUtils } from '../utils';
@@ -142,7 +143,7 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
    * enable sorting in mat-grid
    */
   @Input('sortable')
-  set sortable(value: boolean) {
+  set sortable(value: SortableConfig) {
     this.ngxGnsGridService.sortable = value;
   }
 

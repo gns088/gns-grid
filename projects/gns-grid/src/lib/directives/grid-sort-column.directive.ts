@@ -1,5 +1,5 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
-import { GridState, SortDirection } from '../types';
+import { GridState, SortableConfig, SortDirection } from '../types';
 import { NgxGnsGridService } from '../services/ngx-gns-grid.service';
 import { Subscription } from 'rxjs';
 
@@ -20,7 +20,7 @@ export interface SortEvent {
   host: {
     '[class.asc]': 'direction === "asc"',
     '[class.desc]': 'direction === "desc"',
-    '(click)': 'allowSort && rotate()'
+    '(click)': 'sortable.enable && rotate()'
   }
 })
 export class GridSortColumnDirective implements OnInit, OnDestroy {
@@ -36,8 +36,8 @@ export class GridSortColumnDirective implements OnInit, OnDestroy {
   }
 
   @Input() multiple: boolean = false;
-  @Input() sortable: string = '';
-  @Input() allowSort: boolean;
+  @Input() field: string = '';
+  @Input() sortable: SortableConfig;
   @Input() direction: SortDirection = '';
   private subscription: Subscription;
 
@@ -45,9 +45,9 @@ export class GridSortColumnDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.allowSort) {
+    if (this.sortable.enable) {
       this.subscription = this.ngxGnsGridService.stateObservable$.subscribe((state) => {
-        if (!this.ngxGnsGridService.getGridSortById(this.state.sort, this.sortable)) {
+        if (!this.ngxGnsGridService.getGridSortById(this.state.sort, this.field)) {
           this.direction = '';
         }
       });
@@ -61,13 +61,16 @@ export class GridSortColumnDirective implements OnInit, OnDestroy {
   }
 
   rotate() {
-    const sortObject = this.ngxGnsGridService.getGridSortById(this.state.sort, this.sortable);
+    const sortObject = this.ngxGnsGridService.getGridSortById(this.state.sort, this.field);
     if (sortObject) {
       this.direction = rotate[sortObject.direction];
     } else {
       this.direction = rotate[''];
     }
-    this.state.sort = this.ngxGnsGridService.setGridSortById(this.state.sort, this.sortable, this.direction);
+    if (!this.sortable.multiple) {
+      this.state.sort = [];
+    }
+    this.state.sort = this.ngxGnsGridService.setGridSortById(this.state.sort, this.field, this.direction);
     this.ngxGnsGridService.sortObservable$.next(this.state.sort);
   }
 

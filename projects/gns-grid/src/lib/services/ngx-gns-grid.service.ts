@@ -12,7 +12,8 @@ import {
   GridStateFilter,
   GridStateSort,
   RowSelectionConfig,
-  SelectionModel
+  SelectionModel,
+  SortableConfig
 } from '../types';
 import * as _ from 'lodash';
 
@@ -28,7 +29,7 @@ export class NgxGnsGridService {
   private _columnDef: GridColumnDef[];
   private _showFooter: boolean = false;
   private _pageable: boolean = true;
-  private _sortable: boolean = true;
+  private _sortable: SortableConfig = new SortableConfig();
   private _filterable: boolean = true;
   private _isClientSide: boolean = false;
   private _gridConfig: GridConfig = new GridConfig();
@@ -136,12 +137,13 @@ export class NgxGnsGridService {
     this._pageable = coerceBooleanProperty(value);
   }
 
-  get sortable(): boolean {
+  get sortable(): SortableConfig {
     return this._sortable;
   }
 
-  set sortable(value: boolean) {
-    this._sortable = coerceBooleanProperty(value);
+  set sortable(value: SortableConfig) {
+    this._sortable.enable = coerceBooleanProperty(value.enable === undefined ? true : value.enable);
+    this._sortable.multiple = coerceBooleanProperty(value.multiple || false);
   }
 
   get filterable(): boolean {

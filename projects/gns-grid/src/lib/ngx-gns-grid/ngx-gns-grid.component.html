@@ -1,3 +1,4 @@
+{{ngxGnsGridService.sortable | json}}
 <div
   [class.shadow]="ngxGnsGridService.tableShadow">
   <ng-container *ngIf="ngxGnsGridService.pageable && ngxGnsGridService.paginationConfig.position === 'top'">
@@ -162,8 +163,8 @@
         [style.min-width.px]="column.minWidth"
         sortable
         [state]="state"
-        [sortable]="column.id"
-        [allowSort]="(ngxGnsGridService.sortable && column.sortable === undefined) || (ngxGnsGridService.sortable && column.sortable)">
+        [field]="column.id"
+        [sortable]="ngxGnsGridService.sortable">
       {{column.headerTitleFn ? column.headerTitleFn(column, columnIndex) : column.headerTitle}}
     </th>
   </tr>

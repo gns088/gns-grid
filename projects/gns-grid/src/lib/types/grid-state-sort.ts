@@ -8,3 +8,8 @@ export interface GridStateSort {
   /** the index of sort */
   index: number;
 }
+
+export class SortableConfig {
+  multiple: boolean = false;
+  enable: boolean = true;
+}
