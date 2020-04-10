@@ -56,6 +56,12 @@ export class MatGridStringFilterComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
   onChange() {
     this.filter = this.ngxGnsGridService.setGridFilterById(this.filter, this.id, this.value);
     this.ngxGnsGridService.filterObservable$.next(this.filter);
