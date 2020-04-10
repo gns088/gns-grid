@@ -1,5 +1,5 @@
 import { GridDateUtil } from './date-utils';
-import { GridColumnDef, GridState } from '../types';
+import { GridColumnDef, GridState, GridStateFilter, GridStateSort } from '../types';
 
 declare type FilterTypes =
   'startsWith'
@@ -72,12 +72,11 @@ export class GridUtils {
     return data.slice(pagination.startIndex, pagination.endIndex + 1);
   }
 
-  private static sortData(data: any[], sort: Map<string, string>): Array<any> {
-    const keys = Object.keys(sort);
-    keys.forEach((key) => {
+  private static sortData(data: any[], sort: GridStateSort[]): Array<any> {
+    sort.forEach((object) => {
       data.sort((data1, data2) => {
-        const value1 = GridUtils.resolveFieldData(data1, key);
-        const value2 = GridUtils.resolveFieldData(data2, key);
+        const value1 = GridUtils.resolveFieldData(data1, object.field);
+        const value2 = GridUtils.resolveFieldData(data2, object.field);
         let result = null;
 
         if (value1 == null && value2 != null) {
@@ -92,64 +91,63 @@ export class GridUtils {
           result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
         }
 
-        const order = sort[key] === 'asc' ? 1 : sort[key] === 'desc' ? -1 : 0;
+        const order = object.direction === 'asc' ? 1 : object.direction === 'desc' ? -1 : 0;
         return (order * result);
       });
     });
     return data;
   }
 
-  private static filterData(data: any[], filter: Map<string, any>, columnDef: GridColumnDef[]): Array<any> {
-    const fields = Object.keys(filter).filter(key => filter[key]);
-    if (fields.length) {
-      fields.forEach((fieldId) => {
-        const filterDetail = columnDef.find(o => o.id === fieldId).filterDetails;
-        if (filterDetail) {
-          switch (filterDetail.type) {
-            case 'date':
-              if (filterDetail.range) {
-                data = this.filter(data, fieldId, filter[fieldId].date, 'in', true);
-              } else {
-                data = this.filter(data, fieldId, filter[fieldId].date, 'equalsDate', true);
-              }
-              break;
-            // case 'dateTime':
-            //   if (filterDetail.range) {
-            //     data = this.filter(data, fieldId, filter[fieldId].date, 'in', true);
-            //     data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
-            //     data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
-            //   } else {
-            //     data = this.filter(data, fieldId, filter[fieldId].date, 'equalsDate', true);
-            //     data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
-            //   }
-            //   break;
-            // case 'time':
-            //   if (filterDetail.range) {
-            //     data = this.filter(data, fieldId, filter[fieldId].startTime, 'gt', true);
-            //     data = this.filter(data, fieldId, filter[fieldId].endTime, 'lt', true);
-            //   } else {
-            //     data = this.filter(data, fieldId, filter[fieldId].time, 'equalsTime', true);
-            //   }
-            //   break;
-            case 'multiSelect':
-              data = this.filter(data, fieldId, filter[fieldId], 'in');
-              break;
-            case 'singleSelect':
-              data = this.filter(data, fieldId, filter[fieldId], 'equals');
-              break;
-            case 'number':
-              data = this.filter(data, fieldId, filter[fieldId], 'equals');
-              break;
-            case 'text':
-              data = this.filter(data, fieldId, filter[fieldId], 'contains');
-              break;
-            default:
-              data = this.filter(data, fieldId, filter[fieldId], 'contains');
-              break;
-          }
+  private static filterData(data: any[], filter: GridStateFilter[], columnDef: GridColumnDef[]): Array<any> {
+    filter.forEach((object) => {
+      const filterDetail = columnDef.find(o => o.id === object.field).filterDetails;
+      if (filterDetail) {
+        switch (filterDetail.type) {
+          case 'date':
+            if (filterDetail.range) {
+              data = this.filter(data, object.field, object.value.fromDate, 'in', true);
+              data = this.filter(data, object.field, object.value.toDate, 'in', true);
+            } else {
+              data = this.filter(data, object.field, object.value, 'equalsDate', true);
+            }
+            break;
+          // case 'dateTime':
+          //   if (filterDetail.range) {
+          //     data = this.filter(data, object.field, object.value.fromDate, 'in', true);
+          //     data = this.filter(data, object.field, object.value.toDate, 'in', true);
+          //     data = this.filter(data, object.field, object.value.startTime, 'gt', true);
+          //     data = this.filter(data, object.field, object.value.endTime, 'lt', true);
+          //   } else {
+          //     data = this.filter(data, object.field, object.value.fromDate, 'equalsDate', true);
+          //     data = this.filter(data, object.field, object.value.time, 'equalsTime', true);
+          //   }
+          //   break;
+          // case 'time':
+          //   if (filterDetail.range) {
+          //     data = this.filter(data, object.field, object.value.startTime, 'gt', true);
+          //     data = this.filter(data, object.field, object.value.endTime, 'lt', true);
+          //   } else {
+          //     data = this.filter(data, object.field, object.value.time, 'equalsTime', true);
+          //   }
+          //   break;
+          case 'multiSelect':
+            data = this.filter(data, object.field, object.value, 'in');
+            break;
+          case 'singleSelect':
+            data = this.filter(data, object.field, object.value, 'equals');
+            break;
+          case 'number':
+            data = this.filter(data, object.field, object.value, 'equals');
+            break;
+          case 'text':
+            data = this.filter(data, object.field, object.value, 'contains');
+            break;
+          default:
+            data = this.filter(data, object.field, object.value, 'contains');
+            break;
         }
-      });
-    }
+      }
+    });
     return data;
   }
 
