@@ -42,6 +42,7 @@
         </td>
         <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
           <td
+            [style.width.px]="column.width"
             [style.min-width.px]="column.width"
             class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
               [ngClass]="column.ngClass"
@@ -161,6 +162,7 @@
     <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
         class="{{ngxGnsGridService.gridConfig.headerCellClass}} {{ngxGnsGridService.gridConfig.headerCellClassFn && ngxGnsGridService.gridConfig.headerCellClassFn(column, columnIndex)}}"
         [ngStyle]="ngxGnsGridService.gridConfig.headerCellStyleFn ? ngxGnsGridService.gridConfig.headerCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.headerCellNgStyle ? ngxGnsGridService.gridConfig.headerCellNgStyle : {}"
+        [style.width.px]="column.width"
         [style.min-width.px]="column.width"
         sortable
         [state]="state"
@@ -177,6 +179,7 @@
     [ngStyle]="ngxGnsGridService.gridConfig.headerFilterRowStyleFn ? ngxGnsGridService.gridConfig.headerFilterRowStyleFn() : ngxGnsGridService.gridConfig.headerFilterRowNgStyle ? ngxGnsGridService.gridConfig.headerFilterRowNgStyle : {}">
     <td *ngIf="ngxGnsGridService.selectable" class="selection-column"></td>
     <td
+      [style.width.px]="column.width"
       [style.min-width.px]="column.width"
       *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
       <div class="d-flex flex-column"

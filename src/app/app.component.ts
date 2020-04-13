@@ -20,7 +20,6 @@ export class AppComponent {
     {
       id: 'id',
       headerTitle: '#',
-      width: 400,
       filterDetails: {
         icon: true,
         append: 'fa fa-search',
@@ -32,7 +31,6 @@ export class AppComponent {
     {
       id: 'first',
       headerTitle: 'First',
-      width: 400,
       filterDetails: {
         icon: true,
         range: true,
@@ -44,12 +42,10 @@ export class AppComponent {
     {
       id: 'last',
       headerTitle: 'Last',
-      width: 400,
     },
     {
       id: 'handle',
       headerTitle: 'Handle',
-      width: 400,
     },
     {
       id: 'action',
