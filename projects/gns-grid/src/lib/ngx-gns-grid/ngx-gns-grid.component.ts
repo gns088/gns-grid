@@ -1,6 +1,7 @@
 import {
   Component,
   ContentChildren,
+  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
@@ -243,7 +244,8 @@ export class NgxGnsGridComponent implements OnInit, OnDestroy {
   @Output()
   cellClick: EventEmitter<GridCellClickEvent> = new EventEmitter<GridCellClickEvent>();
 
-  constructor(public ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService) {
+  constructor(public ngxGnsGridStateService: NgxGnsGridStateService, public ngxGnsGridService: NgxGnsGridService,
+              public elementRef: ElementRef) {
   }
 
   ngOnInit() {

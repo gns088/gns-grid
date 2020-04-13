@@ -20,7 +20,7 @@ export class AppComponent {
     {
       id: 'id',
       headerTitle: '#',
-      width: 300,
+      width: 400,
       filterDetails: {
         icon: true,
         append: 'fa fa-search',
@@ -32,7 +32,7 @@ export class AppComponent {
     {
       id: 'first',
       headerTitle: 'First',
-      width: 200,
+      width: 400,
       filterDetails: {
         icon: true,
         range: true,
@@ -43,11 +43,13 @@ export class AppComponent {
     },
     {
       id: 'last',
-      headerTitle: 'Last'
+      headerTitle: 'Last',
+      width: 400,
     },
     {
       id: 'handle',
-      headerTitle: 'Handle'
+      headerTitle: 'Handle',
+      width: 400,
     },
     {
       id: 'action',

@@ -1,11 +1,11 @@
-{{ngxGnsGridService.sortable | json}}
 <div
+  class="table-responsive"
   [class.shadow]="ngxGnsGridService.tableShadow">
   <ng-container *ngIf="ngxGnsGridService.pageable && ngxGnsGridService.paginationConfig.position === 'top'">
     <ng-container *ngTemplateOutlet="paginatorTemplateRef"></ng-container>
   </ng-container>
   <table
-    class="table data-table {{ngxGnsGridService.gridConfig.gridClass}} {{ngxGnsGridService.gridConfig.gridClassFn && ngxGnsGridService.gridConfig.gridClassFn()}}"
+    class="table {{ngxGnsGridService.gridConfig.gridClass}} {{ngxGnsGridService.gridConfig.gridClassFn && ngxGnsGridService.gridConfig.gridClassFn()}}"
     [class.table-sm]="ngxGnsGridService.tableSmall"
     [class.table-bordered]="ngxGnsGridService.tableBordered"
     [class.table-striped]="ngxGnsGridService.stripedRows"
@@ -41,7 +41,9 @@
                  [checked]="ngxGnsGridService.selection.isSelected(rowItem)">
         </td>
         <ng-container *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
-          <td class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
+          <td
+            [style.min-width.px]="column.width"
+            class="{{column.class}} {{column.classFn && column.classFn(rowItem, rowItemIndex)}}"
               [ngClass]="column.ngClass"
               [ngStyle]="column.styleFn ? column.styleFn(rowItem, rowItemIndex) : column.ngStyle ? column.ngStyle : {}"
               (click)="cellClick.emit({column: column, columnIndex: columnIndex, row:rowItem, rowIndex: rowItemIndex, event: $event})">
@@ -71,7 +73,7 @@
       *ngIf="ngxGnsGridService.showFooter"
       class="{{ngxGnsGridService.gridConfig.footerRowClass}} {{ngxGnsGridService.gridConfig.footerRowClassFn && ngxGnsGridService.gridConfig.footerRowClassFn()}}"
       [ngStyle]="ngxGnsGridService.gridConfig.footerRowStyleFn ? ngxGnsGridService.gridConfig.footerRowStyleFn() : ngxGnsGridService.gridConfig.footerRowNgStyle ? ngxGnsGridService.gridConfig.footerRowNgStyle : {}">
-      <th *ngIf="ngxGnsGridService.selectable"></th>
+      <th *ngIf="ngxGnsGridService.selectable" class="selection-column"></th>
       <th *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
           class="{{ngxGnsGridService.gridConfig.footerCellClass}} {{ngxGnsGridService.gridConfig.footerCellClassFn && ngxGnsGridService.gridConfig.footerCellClassFn(column, columnIndex)}}"
           [ngStyle]="ngxGnsGridService.gridConfig.footerCellStyleFn ? ngxGnsGridService.gridConfig.footerCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.footerCellNgStyle ? ngxGnsGridService.gridConfig.footerCellNgStyle : {}">
@@ -159,8 +161,7 @@
     <th scope="col" *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;"
         class="{{ngxGnsGridService.gridConfig.headerCellClass}} {{ngxGnsGridService.gridConfig.headerCellClassFn && ngxGnsGridService.gridConfig.headerCellClassFn(column, columnIndex)}}"
         [ngStyle]="ngxGnsGridService.gridConfig.headerCellStyleFn ? ngxGnsGridService.gridConfig.headerCellStyleFn(column, columnIndex) : ngxGnsGridService.gridConfig.headerCellNgStyle ? ngxGnsGridService.gridConfig.headerCellNgStyle : {}"
-        [style.width.px]="column.width"
-        [style.min-width.px]="column.minWidth"
+        [style.min-width.px]="column.width"
         sortable
         [state]="state"
         [field]="column.id"
@@ -174,8 +175,10 @@
   <tr
     class="{{ngxGnsGridService.gridConfig.headerFilterRowClass}} {{ngxGnsGridService.gridConfig.headerFilterRowClassFn && ngxGnsGridService.gridConfig.headerFilterRowClassFn()}}"
     [ngStyle]="ngxGnsGridService.gridConfig.headerFilterRowStyleFn ? ngxGnsGridService.gridConfig.headerFilterRowStyleFn() : ngxGnsGridService.gridConfig.headerFilterRowNgStyle ? ngxGnsGridService.gridConfig.headerFilterRowNgStyle : {}">
-    <td *ngIf="ngxGnsGridService.selectable"></td>
-    <td *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
+    <td *ngIf="ngxGnsGridService.selectable" class="selection-column"></td>
+    <td
+      [style.min-width.px]="column.width"
+      *ngFor="let column of ngxGnsGridService.columnDef; let columnIndex = index;">
       <div class="d-flex flex-column"
            *ngIf="(ngxGnsGridService.filterable && column.filterable === undefined) || (ngxGnsGridService.filterable && column.filterable)">
         <div class="table-filter">

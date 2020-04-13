@@ -17,7 +17,6 @@ export class GridColumnDef {
   cellNgClass?: object;
   cellNgStyle?: object;
   cellStyleFn?: RowStyleFn;
-  minWidth?: number;
   width?: number;
   sortable?: boolean;
   filterable?: boolean;
