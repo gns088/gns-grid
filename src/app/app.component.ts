@@ -108,6 +108,11 @@ export class AppComponent {
     alert('hello, ' + dataItem.first);
   }
 
+  stopEvent(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
   onStateChange(event) {
     console.log(event);
   }
@@ -128,5 +133,9 @@ export class AppComponent {
   onSelectedKeysChange(event) {
     this.selectedKeys = event;
     console.log(this.selectedKeys);
+  }
+
+  onEvent(event) {
+    console.log('onEvent', event);
   }
 }

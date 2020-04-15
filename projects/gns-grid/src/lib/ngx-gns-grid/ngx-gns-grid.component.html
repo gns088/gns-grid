@@ -34,7 +34,7 @@
           class="{{ngxGnsGridService.gridConfig.rowClass}} {{ngxGnsGridService.gridConfig.rowClassFn && ngxGnsGridService.gridConfig.rowClassFn(rowItem, rowItemIndex)}}
                 {{ngxGnsGridService.selection.isSelected(rowItem) ? ngxGnsGridService.gridConfig.activeRowClass : ''}}"
           [ngStyle]="ngxGnsGridService.gridConfig.rowStyleFn ? ngxGnsGridService.gridConfig.rowStyleFn(rowItem, rowItemIndex) : ngxGnsGridService.gridConfig.rowNgStyle ? ngxGnsGridService.gridConfig.rowNgStyle : {}"
-          (click)="rowClick.emit({dataItem:rowItem, index:rowItemIndex, event: $event})">
+          (click)="$event.stopPropagation(); rowClick.emit({dataItem:rowItem, index:rowItemIndex, event: $event})">
         <td *ngIf="ngxGnsGridService.selectable" class="selection-column">
           <input type="checkbox" (click)="$event.stopPropagation(); onSelectionChange()"
                  (change)="$event ? ngxGnsGridService.selection.toggle(rowItem) : null"

@@ -7,6 +7,8 @@
   <!--  <i class="fa fa-user-circle fa-2x" aria-hidden="true"> </i>-->
   <button class="btn btn-primary" (click)="onReset()">Reset</button>
   <div class="mt-4 p-5 shadow-sm">
+    <ng-select appendTo="body" [items]="[1,2,3,4,5]" (change)="onEvent($event)" (open)="onEvent($event)" (close)="onEvent($event)"></ng-select>
+
     <ngx-gns-grid stripedRows="true"
                   filterable
                   isClientSide="true"
@@ -29,6 +31,9 @@
       <ngx-gns-grid-column id="first">
         <ng-template ngxGnsGridColumnFooterTemplate let-column let-index="index">
           Totol: 10
+        </ng-template>
+        <ng-template ngxGnsGridColumnCellTemplate let-dataItem let-index="index">
+<!--          <ng-select appendTo="body" [items]="[1,2,3,4,5]" (change)="onEvent($event)" (open)="stopEvent($event)" (close)="stopEvent($event)"></ng-select>-->
         </ng-template>
       </ngx-gns-grid-column>
       <ngx-gns-grid-column id="action">
