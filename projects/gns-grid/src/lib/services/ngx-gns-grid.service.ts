@@ -36,7 +36,7 @@ export class NgxGnsGridService {
   private _paginationConfig: GridPaginationConfig = new GridPaginationConfig();
   private _stripedRows: boolean = true;
   private _hoverRows: boolean = true;
-  private _tableShadow: boolean = true;
+  private _tableShadow: boolean = false;
   private _tableBordered: boolean = true;
   private _tableSmall: boolean = true;
   private _tableDark: boolean = false;
@@ -201,7 +201,7 @@ export class NgxGnsGridService {
   }
 
   set tableShadow(value: boolean) {
-    this._tableShadow = value;
+    this._tableShadow = coerceBooleanProperty(value);
   }
 
   get selectable(): boolean {
